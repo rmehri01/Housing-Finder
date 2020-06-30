@@ -1,4 +1,4 @@
-package com.rmehri01.housingfinder
+package housingfinder
 
 import cats.effect._
 import org.scalatest.{ FlatSpec, Matchers }
