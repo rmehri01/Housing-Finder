@@ -1,7 +1,7 @@
 # Housing Finder
 
 ![GitHub Actions Status](https://github.com/rmehri01/Housing-Finder-API/workflows/Build/badge.svg)
-[![codecov](https://codecov.io/gh/rmehri01/housing-finder/branch/master/graphs/badge.svg)](https://codecov.io/gh/rmehri01/Housing-Finder-API)
+[![Codecov Status](https://codecov.io/gh/rmehri01/Housing-Finder-API/branch/master/graphs/badge.svg)](https://codecov.io/gh/rmehri01/Housing-Finder-API)
 
 A basic Typelevel Project
 
