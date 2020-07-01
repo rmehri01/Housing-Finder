@@ -11,7 +11,7 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     Libraries.cats,
     Libraries.catsEffect,
-    Libraries.scalaTest  % Test,
+    Libraries.scalaTest % Test,
     Libraries.scalaCheck % Test,
     compilerPlugin(Libraries.kindProjector),
     compilerPlugin(Libraries.betterMonadicFor)

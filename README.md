@@ -1,9 +1,7 @@
 # Housing Finder
 
 ![GitHub Actions Status](https://github.com/rmehri01/Housing-Finder-API/workflows/Build/badge.svg)
-[![codecov](https://codecov.io/gh/rmehri01/Housing-Finder-API/branch/master/graph/badge.svg?token=XAW1NC5JT9)](https://codecov.io/gh/rmehri01/Housing-Finder-API)
-
-
+[![codecov](https://codecov.io/gh/rmehri01/Housing-Finder-API/branch/master/graph/badge.svg?token=XAW1NC5JT9)](https://codecov.io/gh/rmehri01/Housing-Finder-API) <a href="https://typelevel.org/cats/"><img src="https://typelevel.org/cats/img/cats-badge.svg" height="40px" align="right" alt="Cats friendly" /></a> 
 
 A basic Typelevel Project
 
