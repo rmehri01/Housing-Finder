@@ -1,7 +1,7 @@
-# Housing-finder
+# Housing Finder
 
-[![CircleCI](https://circleci.com/gh/rmehri01/housing-finder/tree/master.svg?style=svg)](https://circleci.com/gh/rmehri01/housing-finder/tree/master)
-[![codecov](https://codecov.io/gh/rmehri01/housing-finder/branch/master/graphs/badge.svg)](https://codecov.io/gh/rmehri01/housing-finder)
+![GitHub Actions Status](https://github.com/rmehri01/Housing-Finder-API/workflows/Build/badge.svg)
+[![codecov](https://codecov.io/gh/rmehri01/housing-finder/branch/master/graphs/badge.svg)](https://codecov.io/gh/rmehri01/Housing-Finder-API)
 
 A basic Typelevel Project
 
