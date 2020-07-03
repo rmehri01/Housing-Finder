@@ -5,7 +5,8 @@ codecov:
 coverage:
   precision: 2
   round: down
-  range: "70...100"
+  # temporarily allow any level of coverage until proper testing can be done
+  range: "0...100"
 
   status:
     project: yes
