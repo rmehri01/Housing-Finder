@@ -4,6 +4,8 @@ name := """housing-finder"""
 
 scalaVersion in ThisBuild := "2.12.10"
 
+scalacOptions += "-Ymacro-annotations"
+
 crossScalaVersions in ThisBuild := Seq("2.12.10", "2.13.1")
 
 lazy val commonSettings = Seq(
@@ -11,10 +13,14 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     Libraries.cats,
     Libraries.catsEffect,
+    Libraries.newtype,
+    Libraries.refined,
+    Libraries.squants,
     Libraries.scalaTest % Test,
     Libraries.scalaCheck % Test,
     compilerPlugin(Libraries.kindProjector),
-    compilerPlugin(Libraries.betterMonadicFor)
+    compilerPlugin(Libraries.betterMonadicFor),
+    compilerPlugin(Libraries.macroParadise)
   )
 )
 
