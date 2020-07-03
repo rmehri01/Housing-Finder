@@ -26,7 +26,8 @@ object Dependencies {
     lazy val newtype = "io.estatico" %% "newtype" % Versions.newtype
     lazy val refined = "eu.timepit" %% "refined" % Versions.refined
     lazy val squants = "org.typelevel" %% "squants" % Versions.squants
-    lazy val http4sJWTAuth = "dev.profunktor" %% "http4s-jwt-auth" % Versions.http4sJWTAuth
+    lazy val http4sJWTAuth =
+      "dev.profunktor" %% "http4s-jwt-auth" % Versions.http4sJWTAuth
 
     // Test
     lazy val scalaTest = "org.scalatest" %% "scalatest" % Versions.scalaTest

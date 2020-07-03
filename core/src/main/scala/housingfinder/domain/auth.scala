@@ -9,6 +9,4 @@ object auth {
   // TODO: restrictions on usernames and passwords
   @newtype case class UserName(value: String)
   @newtype case class Password(value: String)
-
-
 }
