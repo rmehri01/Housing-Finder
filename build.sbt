@@ -16,6 +16,7 @@ lazy val commonSettings = Seq(
     Libraries.newtype,
     Libraries.refined,
     Libraries.squants,
+    Libraries.http4sJWTAuth,
     Libraries.scalaTest % Test,
     Libraries.scalaCheck % Test,
     compilerPlugin(Libraries.kindProjector),
