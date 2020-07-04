@@ -10,6 +10,7 @@ import org.http4s.HttpRoutes
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
+import housingfinder.http.json._
 
 final class UserRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
     auth: Auth[F]
