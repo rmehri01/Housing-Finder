@@ -9,10 +9,10 @@ import scala.util.control.NoStackTrace
 
 object auth {
   @newtype case class UserId(value: UUID)
-  // TODO: restrictions on usernames and passwords
   @newtype case class UserName(value: String)
   @newtype case class Password(value: String)
 
+  // TODO: restrictions on username and password params
   // user registration
   @newtype case class UserNameParam(value: NonEmptyString) {
     def toDomain: UserName = UserName(value.value.toLowerCase)

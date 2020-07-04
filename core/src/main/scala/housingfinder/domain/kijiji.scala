@@ -8,12 +8,14 @@ import squants.market.Money
 
 object kijiji {
   @newtype case class ListingId(value: UUID)
+  @newtype case class Title(value: NonEmptyString)
   @newtype case class Address(value: NonEmptyString)
   @newtype case class Feature(value: NonEmptyString)
   @newtype case class Description(value: NonEmptyString)
 
   case class Listing(
       uuid: ListingId,
+      title: Title,
       address: Address,
       price: Money,
       features: List[Feature],
