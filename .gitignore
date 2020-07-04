@@ -50,3 +50,6 @@ tmp/
 # Windows
 Desktop.ini
 Thumbs.db
+/.metals/
+/.bloop/
+/project/metals.sbt
