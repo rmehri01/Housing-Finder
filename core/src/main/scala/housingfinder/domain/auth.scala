@@ -12,6 +12,8 @@ object auth {
   @newtype case class UserName(value: String)
   @newtype case class Password(value: String)
 
+  @newtype case class EncryptedPassword(value: String)
+
   // TODO: restrictions on username and password params
   // user registration
   @newtype case class UserNameParam(value: NonEmptyString) {
