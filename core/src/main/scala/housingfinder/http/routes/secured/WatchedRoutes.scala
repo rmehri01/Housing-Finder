@@ -5,11 +5,11 @@ import cats.implicits._
 import housingfinder.algebras.Watched
 import housingfinder.domain.kijiji.ListingId
 import housingfinder.http.auth.users.CommonUser
+import housingfinder.http.json._
 import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server._
-import housingfinder.http.json._
 
 final class WatchedRoutes[F[_]: Defer: JsonDecoder: Monad](
     watched: Watched[F]

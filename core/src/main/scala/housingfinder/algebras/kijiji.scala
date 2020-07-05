@@ -14,12 +14,7 @@ trait Kijiji[F[_]] {
   // TODO: some way to filter out listings by desired properties
   def getListings: F[List[Listing]]
   def updateListings: F[Unit]
-  def addListing(
-      title: Title,
-      address: Address,
-      price: Money,
-      description: Description
-  ): F[Unit]
+  def addListing(createListing: CreateListing): F[Unit]
 }
 
 object LiveKijiji {
@@ -38,17 +33,20 @@ final class LiveKijiji[F[_]: Sync] private (
   // TODO: scrape and for each, add listing
   def updateListings: F[Unit] = ???
 
-  def addListing(
-      title: Title,
-      address: Address,
-      price: Money,
-      description: Description
-  ): F[Unit] =
+  def addListing(listing: CreateListing): F[Unit] =
     sessionPool.use { session =>
       session.prepare(insertListing).use { cmd =>
         GenUUID[F].make[ListingId].flatMap { id =>
           cmd
-            .execute(Listing(id, title, address, price, description))
+            .execute(
+              Listing(
+                id,
+                listing.title,
+                listing.address,
+                listing.price,
+                listing.description
+              )
+            )
             .void
         }
       }
