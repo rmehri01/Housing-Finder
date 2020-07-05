@@ -3,8 +3,8 @@ CREATE TABLE listings
     uuid        UUID PRIMARY KEY,
     title       VARCHAR UNIQUE NOT NULL,
     address     VARCHAR UNIQUE NOT NULL,
-    price       NUMERIC        NOT NULL CONSTRAINT positive_price CHECK (price > 0),
-    features    VARCHAR ARRAY  NOT NULL,
+    price       NUMERIC        NOT NULL
+        CONSTRAINT positive_price CHECK ( price > 0 ),
     description VARCHAR        NOT NULL
 );
 
