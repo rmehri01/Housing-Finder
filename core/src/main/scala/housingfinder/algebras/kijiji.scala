@@ -44,7 +44,8 @@ final class LiveKijiji[F[_]: Sync] private (
                 listing.title,
                 listing.address,
                 listing.price,
-                listing.description
+                listing.description,
+                listing.dateTime
               )
             )
             .void
@@ -57,9 +58,11 @@ private object KijijiQueries {
   val codec: Codec[Listing] =
     (uuid.cimap[ListingId] ~ varchar.cimap[Title] ~ varchar
       .cimap[Address] ~ numeric.imap(CAD.apply)(_.amount) ~ varchar
-      .cimap[Description]).imap {
-      case i ~ t ~ a ~ p ~ d => Listing(i, t, a, p, d)
-    }(k => k.uuid ~ k.title ~ k.address ~ k.price ~ k.description)
+      .cimap[Description] ~ timestamp).imap {
+      case i ~ t ~ a ~ p ~ de ~ da => Listing(i, t, a, p, de, da)
+    }(k =>
+      k.uuid ~ k.title ~ k.address ~ k.price ~ k.description ~ k.datePosted
+    )
 
   val selectAll: Query[Void, Listing] =
     sql"""

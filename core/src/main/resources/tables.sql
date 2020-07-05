@@ -5,7 +5,8 @@ CREATE TABLE listings
     address     VARCHAR UNIQUE NOT NULL,
     price       NUMERIC        NOT NULL
         CONSTRAINT positive_price CHECK ( price > 0 ),
-    description VARCHAR        NOT NULL
+    description VARCHAR        NOT NULL,
+    date_posted TIMESTAMP      NOT NULL
 );
 
 CREATE TABLE users

@@ -1,5 +1,6 @@
 package housingfinder.domain
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 import eu.timepit.refined.api.Refined
@@ -19,7 +20,8 @@ object kijiji {
       title: Title,
       address: Address,
       price: Money,
-      description: Description
+      description: Description,
+      datePosted: LocalDateTime
   )
 
   // create listing
@@ -32,14 +34,16 @@ object kijiji {
       titleParam: TitleParam,
       addressParam: AddressParam,
       priceParam: PriceParam,
-      descriptionParam: DescriptionParam
+      descriptionParam: DescriptionParam,
+      dateParam: LocalDateTime
   ) {
     def toDomain: CreateListing =
       CreateListing(
         Title(titleParam.value.value),
         Address(addressParam.value.value),
         CAD(BigDecimal(priceParam.value.value)),
-        Description(descriptionParam.value.value)
+        Description(descriptionParam.value.value),
+        dateParam
       )
   }
 
@@ -47,6 +51,7 @@ object kijiji {
       title: Title,
       address: Address,
       price: Money,
-      description: Description
+      description: Description,
+      dateTime: LocalDateTime
   )
 }
