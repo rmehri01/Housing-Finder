@@ -18,6 +18,7 @@ object Dependencies {
     // Test
     val scalaTest = "3.2.0"
     val scalaCheck = "1.14.3"
+    val scalaTestPlus = "3.2.0.0"
 
     // Compiler
     val kindProjector = "0.10.3"
@@ -60,19 +61,21 @@ object Dependencies {
     lazy val circeParser = circe("circe-parser")
     lazy val circeRefined = circe("circe-refined")
 
-    val skunkCore = skunk("skunk-core")
-    val skunkCirce = skunk("skunk-circe")
+    lazy val skunkCore = skunk("skunk-core")
+    lazy val skunkCirce = skunk("skunk-circe")
 
-    val cirisCore = ciris("ciris")
-    val cirisEnum = ciris("ciris-enumeratum")
-    val cirisRefined = ciris("ciris-refined")
+    lazy val cirisCore = ciris("ciris")
+    lazy val cirisEnum = ciris("ciris-enumeratum")
+    lazy val cirisRefined = ciris("ciris-refined")
 
-    val redis4catsEffects = redis4cats("redis4cats-effects")
-    val redis4catsLog4cats = redis4cats("redis4cats-log4cats")
+    lazy val redis4catsEffects = redis4cats("redis4cats-effects")
+    lazy val redis4catsLog4cats = redis4cats("redis4cats-log4cats")
 
     // Test
     lazy val scalaTest = "org.scalatest" %% "scalatest" % Versions.scalaTest
     lazy val scalaCheck = "org.scalacheck" %% "scalacheck" % Versions.scalaCheck
+    lazy val scalaTestPlus =
+      "org.scalatestplus" %% "scalacheck-1-14" % Versions.scalaTestPlus
 
     // Compiler
     lazy val kindProjector =
