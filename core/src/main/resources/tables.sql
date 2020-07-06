@@ -18,9 +18,12 @@ CREATE TABLE users
 
 CREATE TABLE watched
 (
-    user_id UUID  NOT NULL,
-    items   JSONB NOT NULL,
+    user_id    UUID NOT NULL,
+    listing_id UUID NOT NULL,
     CONSTRAINT user_id_fkey FOREIGN KEY (user_id)
         REFERENCES users (uuid) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT listing_id_fkey FOREIGN KEY (listing_id)
+        REFERENCES listings (uuid) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION
 );
