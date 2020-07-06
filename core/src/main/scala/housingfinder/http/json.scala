@@ -3,7 +3,8 @@ package housingfinder.http
 import cats.Applicative
 import dev.profunktor.auth.jwt.JwtToken
 import housingfinder.domain.auth.{CreateUser, LoginUser}
-import housingfinder.domain.kijiji.Listing
+import housingfinder.domain.kijiji.{CreateListingParam, Listing}
+import housingfinder.http.auth.users.User
 import io.circe.generic.semiauto._
 import io.circe.refined._
 import io.circe.{Decoder, Encoder}
@@ -28,11 +29,20 @@ private[http] trait JsonCodecs {
   implicit val listingEncoder: Encoder[Listing] =
     deriveEncoder[Listing]
 
+  implicit val createListingDecoder: Decoder[CreateListingParam] =
+    deriveDecoder[CreateListingParam]
+
   implicit val moneyEncoder: Encoder[Money] =
     Encoder[BigDecimal].contramap(_.amount)
 
   implicit val tokenEncoder: Encoder[JwtToken] =
     Encoder.forProduct1("accessToken")(_.value)
+
+  implicit val userEncoder: Encoder[User] =
+    deriveEncoder[User]
+
+  implicit val userDecoder: Decoder[User] =
+    deriveDecoder[User]
 
   implicit val createUserDecoder: Decoder[CreateUser] =
     deriveDecoder[CreateUser]

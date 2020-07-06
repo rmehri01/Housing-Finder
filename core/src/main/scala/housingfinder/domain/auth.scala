@@ -4,15 +4,21 @@ import java.util.UUID
 
 import eu.timepit.refined.types.string.NonEmptyString
 import io.estatico.newtype.macros.newtype
+import javax.crypto.Cipher
 
 import scala.util.control.NoStackTrace
 
 object auth {
   @newtype case class UserId(value: UUID)
-  // TODO: restrictions on usernames and passwords
   @newtype case class UserName(value: String)
   @newtype case class Password(value: String)
 
+  @newtype case class EncryptedPassword(value: String)
+
+  @newtype case class EncryptCipher(value: Cipher)
+  @newtype case class DecryptCipher(value: Cipher)
+
+  // TODO: restrictions on username and password params
   // user registration
   @newtype case class UserNameParam(value: NonEmptyString) {
     def toDomain: UserName = UserName(value.value.toLowerCase)

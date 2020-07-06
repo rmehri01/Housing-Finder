@@ -11,6 +11,9 @@ object Dependencies {
     val http4s = "0.21.6"
     val http4sJwtAuth = "0.0.5"
     val circe = "0.13.0"
+    val skunk = "0.0.13"
+    val ciris = "1.1.1"
+    val redis4cats = "0.10.1"
 
     // Test
     val scalaTest = "3.2.0"
@@ -27,12 +30,22 @@ object Dependencies {
       "io.circe" %% artifact % Versions.circe
     def http4s(artifact: String): ModuleID =
       "org.http4s" %% artifact % Versions.http4s
+    def skunk(artifact: String): ModuleID =
+      "org.tpolecat" %% artifact % Versions.skunk
+    def refined(artifact: String): ModuleID =
+      "eu.timepit" %% artifact % Versions.refined
+    def ciris(artifact: String): ModuleID =
+      "is.cir" %% artifact % Versions.ciris
+    def redis4cats(artifact: String): ModuleID =
+      "dev.profunktor" %% artifact % Versions.redis4cats
 
     lazy val cats = "org.typelevel" %% "cats-core" % Versions.cats
     lazy val catsEffect = "org.typelevel" %% "cats-effect" % Versions.catsEffect
     lazy val newtype = "io.estatico" %% "newtype" % Versions.newtype
-    lazy val refined = "eu.timepit" %% "refined" % Versions.refined
     lazy val squants = "org.typelevel" %% "squants" % Versions.squants
+
+    lazy val refinedCats = refined("refined-cats")
+    lazy val refinedCore = refined("refined")
 
     lazy val http4sDsl = http4s("http4s-dsl")
     lazy val http4sServer = http4s("http4s-blaze-server")
@@ -46,6 +59,16 @@ object Dependencies {
     lazy val circeGeneric = circe("circe-generic")
     lazy val circeParser = circe("circe-parser")
     lazy val circeRefined = circe("circe-refined")
+
+    val skunkCore = skunk("skunk-core")
+    val skunkCirce = skunk("skunk-circe")
+
+    val cirisCore = ciris("ciris")
+    val cirisEnum = ciris("ciris-enumeratum")
+    val cirisRefined = ciris("ciris-refined")
+
+    val redis4catsEffects = redis4cats("redis4cats-effects")
+    val redis4catsLog4cats = redis4cats("redis4cats-log4cats")
 
     // Test
     lazy val scalaTest = "org.scalatest" %% "scalatest" % Versions.scalaTest
