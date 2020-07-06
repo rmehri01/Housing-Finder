@@ -7,6 +7,7 @@ import io.estatico.newtype.macros.newtype
 import scala.concurrent.duration.FiniteDuration
 
 object data {
+  @newtype case class JwtSecretKeyConfig(value: Secret[NonEmptyString])
   @newtype case class TokenExpiration(value: FiniteDuration)
 
   @newtype case class PasswordSalt(value: Secret[NonEmptyString])

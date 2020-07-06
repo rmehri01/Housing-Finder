@@ -38,6 +38,9 @@ private[http] trait JsonCodecs {
   implicit val tokenEncoder: Encoder[JwtToken] =
     Encoder.forProduct1("accessToken")(_.value)
 
+  implicit val userEncoder: Encoder[User] =
+    deriveEncoder[User]
+
   implicit val userDecoder: Decoder[User] =
     deriveDecoder[User]
 

@@ -16,7 +16,10 @@ trait Users[F[_]] {
 }
 
 object LiveUsers {
-  def make[F[_]: Sync](sessionPool: Resource[F, Session[F]], crypto: Crypto): F[Users[F]] =
+  def make[F[_]: Sync](
+      sessionPool: Resource[F, Session[F]],
+      crypto: Crypto
+  ): F[Users[F]] =
     Sync[F].delay(new LiveUsers[F](sessionPool, crypto))
 }
 
