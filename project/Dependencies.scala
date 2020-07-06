@@ -12,6 +12,8 @@ object Dependencies {
     val http4sJwtAuth = "0.0.5"
     val circe = "0.13.0"
     val skunk = "0.0.13"
+    val ciris = "1.1.1"
+    val redis4cats = "0.10.1"
 
     // Test
     val scalaTest = "3.2.0"
@@ -32,6 +34,10 @@ object Dependencies {
       "org.tpolecat" %% artifact % Versions.skunk
     def refined(artifact: String): ModuleID =
       "eu.timepit" %% artifact % Versions.refined
+    def ciris(artifact: String): ModuleID =
+      "is.cir" %% artifact % Versions.ciris
+    def redis4cats(artifact: String): ModuleID =
+      "dev.profunktor" %% artifact % Versions.redis4cats
 
     lazy val cats = "org.typelevel" %% "cats-core" % Versions.cats
     lazy val catsEffect = "org.typelevel" %% "cats-effect" % Versions.catsEffect
@@ -56,6 +62,13 @@ object Dependencies {
 
     val skunkCore = skunk("skunk-core")
     val skunkCirce = skunk("skunk-circe")
+
+    val cirisCore = ciris("ciris")
+    val cirisEnum = ciris("ciris-enumeratum")
+    val cirisRefined = ciris("ciris-refined")
+
+    val redis4catsEffects = redis4cats("redis4cats-effects")
+    val redis4catsLog4cats = redis4cats("redis4cats-log4cats")
 
     // Test
     lazy val scalaTest = "org.scalatest" %% "scalatest" % Versions.scalaTest
