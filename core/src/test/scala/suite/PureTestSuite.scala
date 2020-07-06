@@ -1,4 +1,4 @@
-package housingfinder.suite
+package suite
 
 import java.util.UUID
 

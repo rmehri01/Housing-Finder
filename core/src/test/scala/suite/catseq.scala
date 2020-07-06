@@ -1,4 +1,4 @@
-package housingfinder.suite
+package suite
 
 import cats.Eq
 import org.scalactic.TripleEqualsSupport.{
