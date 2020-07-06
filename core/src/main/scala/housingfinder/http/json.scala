@@ -3,6 +3,7 @@ package housingfinder.http
 import cats.Applicative
 import dev.profunktor.auth.jwt.JwtToken
 import housingfinder.domain.auth.{CreateUser, LoginUser}
+import housingfinder.domain.healthcheck.AppStatus
 import housingfinder.domain.kijiji.{CreateListingParam, Listing}
 import housingfinder.http.auth.users.User
 import io.circe.generic.semiauto._
@@ -49,4 +50,7 @@ private[http] trait JsonCodecs {
 
   implicit val loginUserDecoder: Decoder[LoginUser] =
     deriveDecoder[LoginUser]
+
+  implicit val appStatusEncoder: Encoder[AppStatus] =
+    deriveEncoder[AppStatus]
 }
