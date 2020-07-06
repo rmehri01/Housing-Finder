@@ -27,13 +27,13 @@ final class LiveKijiji[F[_]: Sync] private (
 ) extends Kijiji[F] {
   import KijijiQueries._
 
-  def getListings: F[List[Listing]] =
+  override def getListings: F[List[Listing]] =
     sessionPool.use(_.execute(selectAll))
 
   // TODO: scrape and for each, add listing
-  def updateListings: F[Unit] = ???
+  override def updateListings: F[Unit] = ???
 
-  def addListing(listing: CreateListing): F[Unit] =
+  override def addListing(listing: CreateListing): F[Unit] =
     sessionPool.use { session =>
       session.prepare(insertListing).use { cmd =>
         GenUUID[F].make[ListingId].flatMap { id =>
@@ -67,6 +67,7 @@ private object KijijiQueries {
   val selectAll: Query[Void, Listing] =
     sql"""
          SELECT * FROM listings
+         ORDER BY date_posted DESC
        """.query(codec)
 
   val insertListing: Command[Listing] =

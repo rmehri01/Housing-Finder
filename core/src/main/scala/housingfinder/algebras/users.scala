@@ -16,7 +16,7 @@ trait Users[F[_]] {
 }
 
 object LiveUsers {
-  def make[F[_]: Sync](sessionPool: Resource[F, Session[F]], crypto: Crypto) =
+  def make[F[_]: Sync](sessionPool: Resource[F, Session[F]], crypto: Crypto): F[Users[F]] =
     Sync[F].delay(new LiveUsers[F](sessionPool, crypto))
 }
 
@@ -26,7 +26,7 @@ final class LiveUsers[F[_]: BracketThrow: GenUUID] private (
 ) extends Users[F] {
   import UserQueries._
 
-  def find(username: UserName, password: Password): F[Option[User]] =
+  override def find(username: UserName, password: Password): F[Option[User]] =
     sessionPool.use { session =>
       session.prepare(selectUser).use { q =>
         q.option(username).map {
@@ -38,7 +38,7 @@ final class LiveUsers[F[_]: BracketThrow: GenUUID] private (
       }
     }
 
-  def create(username: UserName, password: Password): F[UserId] =
+  override def create(username: UserName, password: Password): F[UserId] =
     sessionPool.use { session =>
       session.prepare(insertUser).use { cmd =>
         GenUUID[F].make[UserId].flatMap { id =>
