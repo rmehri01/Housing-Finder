@@ -14,10 +14,10 @@ import suite.AuthHttpTestSuite
 
 class AuthRoutesSpec extends AuthHttpTestSuite {
 
-  forAll { (u: Username, p: Password, t: JwtToken) =>
+  forAll { (c: CreateUserParam, t: JwtToken) =>
     spec("POST create new user [OK]") {
       POST(
-        Map("username" -> u.value, "password" -> p.value),
+        c,
         uri"/auth" / "users"
       )
         .flatMap { req =>
@@ -28,24 +28,24 @@ class AuthRoutesSpec extends AuthHttpTestSuite {
     }
   }
 
-  forAll { (u: Username, p: Password, t: JwtToken) =>
+  forAll { (c: CreateUserParam, t: JwtToken) =>
     spec("POST create new user, username in use [ERROR]") {
       POST(
-        Map("username" -> u.value, "password" -> p.value),
+        c,
         uri"/auth" / "users"
       )
         .flatMap { req =>
           val routes =
             new UserRoutes(failingAuthUsernameInUse(t)).routes
-          assertHttp(routes, req)(Status.Conflict, u)
+          assertHttp(routes, req)(Status.Conflict, c.username.value.value)
         }
     }
   }
 
-  forAll { (u: Username, p: Password, t: JwtToken) =>
+  forAll { (l: LoginUserParam, t: JwtToken) =>
     spec("POST login existing user [OK]") {
       POST(
-        Map("username" -> u.value, "password" -> p.value),
+        l,
         uri"/auth" / "login"
       )
         .flatMap { req =>
@@ -56,10 +56,10 @@ class AuthRoutesSpec extends AuthHttpTestSuite {
     }
   }
 
-  forAll { (u: Username, p: Password, t: JwtToken) =>
+  forAll { (l: LoginUserParam, t: JwtToken) =>
     spec("POST login existing user, incorrect login [ERROR]") {
       POST(
-        Map("username" -> u.value, "password" -> p.value),
+        l,
         uri"/auth" / "login"
       )
         .flatMap { req =>

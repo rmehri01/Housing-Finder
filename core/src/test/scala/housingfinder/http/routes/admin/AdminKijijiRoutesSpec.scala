@@ -2,18 +2,18 @@ package housingfinder.http.routes.admin
 
 import cats.effect.IO
 import housingfinder.algebras.Kijiji
+import housingfinder.arbitraries._
 import housingfinder.domain.kijiji._
+import housingfinder.http.json._
 import org.http4s.Method._
 import org.http4s._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import suite.AuthHttpTestSuite
-import housingfinder.http.json._
-import housingfinder.arbitraries._
 
 class AdminKijijiRoutesSpec extends AuthHttpTestSuite {
-  forAll { (c: CreateListing) =>
-    spec("POST login existing user, incorrect login [ERROR]") {
+  forAll { (c: CreateListingParam) =>
+    spec("POST create listing [OK]") {
       POST(
         c,
         uri"/kijiji"

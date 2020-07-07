@@ -28,7 +28,7 @@ object auth {
     def toDomain: Password = Password(value.value)
   }
 
-  case class CreateUser(
+  case class CreateUserParam(
       username: UsernameParam,
       password: PasswordParam
   )
@@ -40,7 +40,7 @@ object auth {
   case object TokenNotFound extends NoStackTrace
 
   // user login
-  case class LoginUser(
+  case class LoginUserParam(
       username: UsernameParam,
       password: PasswordParam
   )

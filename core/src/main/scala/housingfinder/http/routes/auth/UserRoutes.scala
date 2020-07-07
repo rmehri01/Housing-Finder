@@ -3,7 +3,7 @@ package housingfinder.http.routes.auth
 import cats._
 import cats.implicits._
 import housingfinder.algebras.Auth
-import housingfinder.domain.auth.{CreateUser, UsernameInUse}
+import housingfinder.domain.auth.{CreateUserParam, UsernameInUse}
 import housingfinder.effects.MonadThrow
 import housingfinder.http.decoder._
 import housingfinder.http.json._
@@ -20,7 +20,7 @@ final class UserRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
 
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of {
     case ar @ POST -> Root / "users" =>
-      ar.decodeR[CreateUser] { user =>
+      ar.decodeR[CreateUserParam] { user =>
         auth
           .newUser(user.username.toDomain, user.password.toDomain)
           .flatMap(Created(_))
