@@ -1,6 +1,6 @@
 package housingfinder
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZoneOffset}
 import java.util.UUID
 
 import dev.profunktor.auth.jwt.JwtToken
@@ -35,10 +35,21 @@ object generators {
   val genMoney: Gen[Money] =
     Gen.posNum[Double].map(n => CAD(BigDecimal(n)))
 
-  val genLocalDateTime: Gen[LocalDateTime] =
-    Gen.calendar.map(cal =>
-      LocalDateTime.ofInstant(cal.toInstant, cal.getTimeZone.toZoneId)
-    )
+  val genLocalDateTime: Gen[LocalDateTime] = {
+    val utc = ZoneOffset.UTC
+
+    val rangeStart = LocalDateTime
+      .now(utc)
+      .minusYears(5)
+      .toEpochSecond(utc)
+    val currentYear = LocalDateTime.now(utc).getYear
+    val rangeEnd =
+      LocalDateTime.of(currentYear, 1, 1, 0, 0, 0).toEpochSecond(utc)
+
+    Gen
+      .choose(rangeStart, rangeEnd)
+      .map(i => LocalDateTime.ofEpochSecond(i, 0, utc))
+  }
 
   val genJwtToken: Gen[JwtToken] =
     genNonEmptyString.map(JwtToken)
@@ -52,6 +63,15 @@ object generators {
       de <- cbStr[Description]
       da <- genLocalDateTime
     } yield Listing(i, t, a, p, de, da)
+
+  val genCreateListing: Gen[CreateListing] =
+    for {
+      t <- cbStr[Title]
+      a <- cbStr[Address]
+      p <- genMoney
+      de <- cbStr[Description]
+      da <- genLocalDateTime
+    } yield CreateListing(t, a, p, de, da)
 
   val genAppStatus: Gen[AppStatus] =
     for {
