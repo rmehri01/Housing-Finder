@@ -6,7 +6,7 @@ import java.util.UUID
 import dev.profunktor.auth.jwt.JwtToken
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.string.ValidBigDecimal
-import housingfinder.domain.auth.{CreateUserParam, LoginUserParam, PasswordParam, UsernameParam}
+import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.{AppStatus, PostgresStatus, RedisStatus}
 import housingfinder.domain.kijiji._
 import io.estatico.newtype.Coercible
@@ -33,7 +33,7 @@ object generators {
       }
 
   val genMoney: Gen[Money] =
-    Gen.posNum[Long].map(n => CAD(BigDecimal(n)))
+    Gen.posNum[Double].map(n => CAD(BigDecimal(n)))
 
   val genLocalDateTime: Gen[LocalDateTime] =
     Gen.calendar.map(cal =>
@@ -63,7 +63,11 @@ object generators {
     for {
       t <- genStrRefinedUnsafe(TitleParam.apply)
       a <- genStrRefinedUnsafe(AddressParam.apply)
-      p <- genMoney.map(s => Refined.unsafeApply[String, ValidBigDecimal](s.toString)).map(PriceParam.apply)
+      p <-
+        Gen
+          .posNum[Double]
+          .map(l => Refined.unsafeApply[String, ValidBigDecimal](l.toString))
+          .map(PriceParam.apply)
       de <- genStrRefinedUnsafe(DescriptionParam.apply)
       da <- genLocalDateTime
     } yield CreateListingParam(t, a, p, de, da)

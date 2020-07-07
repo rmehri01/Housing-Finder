@@ -19,6 +19,7 @@ class AdminKijijiRoutesSpec extends AuthHttpTestSuite {
         uri"/kijiji"
       )
         .flatMap { req =>
+          println(c)
           val routes =
             new AdminKijijiRoutes(new TestKijiji).routes(adminUserMiddleware)
           assertHttpStatus(routes, req)(Status.Created)
