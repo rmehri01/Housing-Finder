@@ -24,7 +24,7 @@ final class WatchedRoutes[F[_]: Defer: JsonDecoder: Monad](
     // TODO: maybe error when already in or cannot be found, use .recoverWith on domain errors
     case POST -> Root / UUIDVar(uuid) as user =>
       watched.add(user.value.id, ListingId(uuid)) *>
-        NoContent()
+        Created()
 
     case DELETE -> Root / UUIDVar(uuid) as user =>
       watched.remove(user.value.id, ListingId(uuid)) *>
