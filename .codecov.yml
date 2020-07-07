@@ -5,13 +5,11 @@ codecov:
 coverage:
   precision: 2
   round: down
-  # temporarily allow any level of coverage until proper testing can be done
-  range: "0...100"
+  range: "70...100"
 
   status:
-    # same here
-    project: off
-    patch: off
+    project: yes
+    patch: yes
     changes: yes
 
 parsers:
