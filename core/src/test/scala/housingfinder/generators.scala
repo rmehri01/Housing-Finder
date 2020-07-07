@@ -3,6 +3,7 @@ package housingfinder
 import java.time.LocalDateTime
 import java.util.UUID
 
+import dev.profunktor.auth.jwt.JwtToken
 import housingfinder.domain.healthcheck.{AppStatus, PostgresStatus, RedisStatus}
 import housingfinder.domain.kijiji._
 import io.estatico.newtype.Coercible
@@ -36,6 +37,9 @@ object generators {
     Gen.calendar.map(cal =>
       LocalDateTime.ofInstant(cal.toInstant, cal.getTimeZone.toZoneId)
     )
+
+  val genJwtToken: Gen[JwtToken] =
+    genNonEmptyString.map(JwtToken)
 
   val genListing: Gen[Listing] =
     for {

@@ -11,8 +11,8 @@ import skunk.codec.all._
 import skunk.implicits._
 
 trait Users[F[_]] {
-  def find(username: UserName, password: Password): F[Option[User]]
-  def create(username: UserName, password: Password): F[UserId]
+  def find(username: Username, password: Password): F[Option[User]]
+  def create(username: Username, password: Password): F[UserId]
 }
 
 object LiveUsers {
@@ -29,7 +29,7 @@ final class LiveUsers[F[_]: BracketThrow: GenUUID] private (
 ) extends Users[F] {
   import UserQueries._
 
-  override def find(username: UserName, password: Password): F[Option[User]] =
+  override def find(username: Username, password: Password): F[Option[User]] =
     sessionPool.use { session =>
       session.prepare(selectUser).use { q =>
         q.option(username).map {
@@ -41,7 +41,7 @@ final class LiveUsers[F[_]: BracketThrow: GenUUID] private (
       }
     }
 
-  override def create(username: UserName, password: Password): F[UserId] =
+  override def create(username: Username, password: Password): F[UserId] =
     sessionPool.use { session =>
       session.prepare(insertUser).use { cmd =>
         GenUUID[F].make[UserId].flatMap { id =>
@@ -60,7 +60,7 @@ final class LiveUsers[F[_]: BracketThrow: GenUUID] private (
 private object UserQueries {
 
   val codec: Codec[User ~ EncryptedPassword] =
-    (uuid.cimap[UserId] ~ varchar.cimap[UserName] ~ varchar
+    (uuid.cimap[UserId] ~ varchar.cimap[Username] ~ varchar
       .cimap[EncryptedPassword]).imap {
       case i ~ n ~ p =>
         User(i, n) ~ p
@@ -69,10 +69,10 @@ private object UserQueries {
         u.id ~ u.name ~ p
     }
 
-  val selectUser: Query[UserName, User ~ EncryptedPassword] =
+  val selectUser: Query[Username, User ~ EncryptedPassword] =
     sql"""
         SELECT * FROM users
-        WHERE name = ${varchar.cimap[UserName]}
+        WHERE name = ${varchar.cimap[Username]}
        """.query(codec)
 
   val insertUser: Command[User ~ EncryptedPassword] =

@@ -4,7 +4,7 @@ import java.util.UUID
 
 import cats.data.Kleisli
 import cats.effect.IO
-import housingfinder.domain.auth.{UserId, UserName}
+import housingfinder.domain.auth.{UserId, Username}
 import housingfinder.http.auth.users.{AdminUser, CommonUser, User}
 import io.circe.Encoder
 import io.circe.syntax._
@@ -55,7 +55,7 @@ class HttpTestSuite extends PureTestSuite {
 
 class AuthHttpTestSuite extends HttpTestSuite {
   val authUser: CommonUser = CommonUser(
-    User(UserId(UUID.randomUUID), UserName("user"))
+    User(UserId(UUID.randomUUID), Username("user"))
   )
 
   val authUserMiddleware: AuthMiddleware[IO, CommonUser] = AuthMiddleware(
@@ -63,7 +63,7 @@ class AuthHttpTestSuite extends HttpTestSuite {
   )
 
   val adminUser: AdminUser = AdminUser(
-    User(UserId(UUID.randomUUID), UserName("admin"))
+    User(UserId(UUID.randomUUID), Username("admin"))
   )
 
   val adminUserMiddleware: AuthMiddleware[IO, AdminUser] = AuthMiddleware(
