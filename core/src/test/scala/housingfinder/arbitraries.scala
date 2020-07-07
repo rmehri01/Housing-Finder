@@ -3,13 +3,16 @@ package housingfinder
 import dev.profunktor.auth.jwt.JwtToken
 import housingfinder.domain.auth.{Password, Username}
 import housingfinder.domain.healthcheck.AppStatus
-import housingfinder.domain.kijiji.{Listing, ListingId}
+import housingfinder.domain.kijiji.{CreateListing, Listing, ListingId}
 import housingfinder.generators._
 import org.scalacheck.Arbitrary
 
 object arbitraries {
   implicit val arbListing: Arbitrary[Listing] =
     Arbitrary(genListing)
+
+  implicit val arbCreateListing: Arbitrary[CreateListing] =
+    Arbitrary(genCreateListing)
 
   implicit val arbAppStatus: Arbitrary[AppStatus] =
     Arbitrary(genAppStatus)

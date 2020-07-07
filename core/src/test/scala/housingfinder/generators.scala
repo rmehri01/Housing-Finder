@@ -51,9 +51,19 @@ object generators {
       da <- genLocalDateTime
     } yield Listing(i, t, a, p, de, da)
 
+  val genCreateListing: Gen[CreateListing] =
+    for {
+      t <- cbStr[Title]
+      a <- cbStr[Address]
+      p <- genMoney
+      de <- cbStr[Description]
+      da <- genLocalDateTime
+    } yield CreateListing(t, a, p, de, da)
+
   val genAppStatus: Gen[AppStatus] =
     for {
       r <- cbBool[RedisStatus]
       p <- cbBool[PostgresStatus]
     } yield AppStatus(r, p)
+
 }
