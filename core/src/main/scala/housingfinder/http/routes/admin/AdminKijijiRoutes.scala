@@ -22,11 +22,14 @@ final class AdminKijijiRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
   private val httpRoutes: AuthedRoutes[AdminUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root as _ =>
       ar.req.decodeR[CreateListingParam] { listing =>
-        Created(kijiji.addListing(listing.toDomain))
+        kijiji.addListing(listing.toDomain) *>
+          Created()
       }
 
+    // TODO: recoverWith
     case PUT -> Root as _ =>
-      kijiji.updateListings *> Ok()
+      kijiji.updateListings *>
+        Ok()
   }
 
   def routes(authMiddleware: AuthMiddleware[F, AdminUser]): HttpRoutes[F] =

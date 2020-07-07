@@ -2,7 +2,7 @@ package housingfinder.http
 
 import cats.Applicative
 import dev.profunktor.auth.jwt.JwtToken
-import housingfinder.domain.auth.{CreateUser, LoginUser}
+import housingfinder.domain.auth.{CreateUserParam, LoginUserParam}
 import housingfinder.domain.healthcheck.AppStatus
 import housingfinder.domain.kijiji.{CreateListingParam, Listing}
 import housingfinder.http.auth.users.User
@@ -30,7 +30,10 @@ private[http] trait JsonCodecs {
   implicit val listingEncoder: Encoder[Listing] =
     deriveEncoder[Listing]
 
-  implicit val createListingDecoder: Decoder[CreateListingParam] =
+  implicit val createListingParamEncoder: Encoder[CreateListingParam] =
+    deriveEncoder[CreateListingParam]
+
+  implicit val createListingParamDecoder: Decoder[CreateListingParam] =
     deriveDecoder[CreateListingParam]
 
   implicit val moneyEncoder: Encoder[Money] =
@@ -45,11 +48,17 @@ private[http] trait JsonCodecs {
   implicit val userDecoder: Decoder[User] =
     deriveDecoder[User]
 
-  implicit val createUserDecoder: Decoder[CreateUser] =
-    deriveDecoder[CreateUser]
+  implicit val createUserEncoder: Encoder[CreateUserParam] =
+    deriveEncoder[CreateUserParam]
 
-  implicit val loginUserDecoder: Decoder[LoginUser] =
-    deriveDecoder[LoginUser]
+  implicit val createUserDecoder: Decoder[CreateUserParam] =
+    deriveDecoder[CreateUserParam]
+
+  implicit val loginUserEncoder: Encoder[LoginUserParam] =
+    deriveEncoder[LoginUserParam]
+
+  implicit val loginUserDecoder: Decoder[LoginUserParam] =
+    deriveDecoder[LoginUserParam]
 
   implicit val appStatusEncoder: Encoder[AppStatus] =
     deriveEncoder[AppStatus]

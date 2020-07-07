@@ -15,9 +15,9 @@ import io.circe.syntax._
 import pdi.jwt.JwtClaim
 
 trait Auth[F[_]] {
-  def newUser(username: UserName, password: Password): F[JwtToken]
-  def login(username: UserName, password: Password): F[JwtToken]
-  def logout(token: JwtToken, username: UserName): F[Unit]
+  def newUser(username: Username, password: Password): F[JwtToken]
+  def login(username: Username, password: Password): F[JwtToken]
+  def logout(token: JwtToken, username: Username): F[Unit]
 }
 
 trait UsersAuth[F[_], A] {
@@ -90,9 +90,9 @@ final class LiveAuth[F[_]: MonadThrow] private (
 ) extends Auth[F] {
   private val tokenExpiryDuration = tokenExpiration.value
 
-  override def newUser(username: UserName, password: Password): F[JwtToken] =
+  override def newUser(username: Username, password: Password): F[JwtToken] =
     users.find(username, password).flatMap {
-      case Some(_) => UserNameInUse(username).raiseError[F, JwtToken]
+      case Some(_) => UsernameInUse(username).raiseError[F, JwtToken]
       case None =>
         for {
           i <- users.create(username, password)
@@ -103,7 +103,7 @@ final class LiveAuth[F[_]: MonadThrow] private (
         } yield t
     }
 
-  override def login(username: UserName, password: Password): F[JwtToken] =
+  override def login(username: Username, password: Password): F[JwtToken] =
     users.find(username, password).flatMap {
       case None => InvalidUserOrPassword(username).raiseError[F, JwtToken]
       case Some(user) =>
@@ -117,7 +117,7 @@ final class LiveAuth[F[_]: MonadThrow] private (
         }
     }
 
-  override def logout(token: JwtToken, username: UserName): F[Unit] =
+  override def logout(token: JwtToken, username: Username): F[Unit] =
     redis.del(token.value) *>
       redis.del(username.value)
 }

@@ -35,6 +35,7 @@ lazy val commonSettings = Seq(
     Libraries.redis4catsLog4cats,
     Libraries.scalaTest % Test,
     Libraries.scalaCheck % Test,
+    Libraries.scalaTestPlus,
     compilerPlugin(Libraries.kindProjector),
     compilerPlugin(Libraries.betterMonadicFor),
     compilerPlugin(Libraries.macroParadise)
