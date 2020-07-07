@@ -17,7 +17,7 @@ class KijijiRoutesSpec extends HttpTestSuite {
   forAll { (l: List[Listing]) =>
     spec("GET kijiji [OK]") {
       GET(uri"/kijiji").flatMap { req =>
-        val routes = new KijijiRoutes[IO](dataKijiji(l)).routes
+        val routes = new KijijiRoutes(dataKijiji(l)).routes
         assertHttp(routes, req)(Status.Ok, l)
       }
     }
@@ -26,7 +26,7 @@ class KijijiRoutesSpec extends HttpTestSuite {
   forAll { (l: List[Listing]) =>
     spec("GET kijiji [ERROR]") {
       GET(uri"/kijiji").flatMap { req =>
-        val routes = new KijijiRoutes[IO](failingKijiji(l)).routes
+        val routes = new KijijiRoutes(failingKijiji(l)).routes
         assertHttpFailure(routes, req)
       }
     }

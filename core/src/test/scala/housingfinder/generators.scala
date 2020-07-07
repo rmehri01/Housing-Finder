@@ -3,10 +3,11 @@ package housingfinder
 import java.time.LocalDateTime
 import java.util.UUID
 
+import housingfinder.domain.healthcheck.{AppStatus, PostgresStatus, RedisStatus}
 import housingfinder.domain.kijiji._
 import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops._
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 import squants.market.{CAD, Money}
 
 object generators {
@@ -16,6 +17,9 @@ object generators {
 
   def cbStr[A: Coercible[String, *]]: Gen[A] =
     genNonEmptyString.map(_.coerce[A])
+
+  def cbBool[A: Coercible[Boolean, *]]: Gen[A] =
+    Arbitrary.arbBool.arbitrary.map(_.coerce[A])
 
   val genNonEmptyString: Gen[String] =
     Gen
@@ -42,4 +46,10 @@ object generators {
       de <- cbStr[Description]
       da <- genLocalDateTime
     } yield Listing(i, t, a, p, de, da)
+
+  val genAppStatus: Gen[AppStatus] =
+    for {
+      r <- cbBool[RedisStatus]
+      p <- cbBool[PostgresStatus]
+    } yield AppStatus(r, p)
 }
