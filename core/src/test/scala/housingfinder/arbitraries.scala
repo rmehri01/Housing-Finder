@@ -1,7 +1,7 @@
 package housingfinder
 
 import dev.profunktor.auth.jwt.JwtToken
-import housingfinder.domain.auth.{CreateUserParam, LoginUserParam}
+import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.AppStatus
 import housingfinder.domain.kijiji._
 import housingfinder.generators._
@@ -31,4 +31,10 @@ object arbitraries {
 
   implicit val arbLoginUserParam: Arbitrary[LoginUserParam] =
     Arbitrary(genLoginUserParam)
+
+  implicit val arbUsername: Arbitrary[Username] =
+    Arbitrary(cbStr[Username])
+
+  implicit val arbPassword: Arbitrary[Password] =
+    Arbitrary(cbStr[Password])
 }

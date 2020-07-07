@@ -2,10 +2,17 @@ package integration
 
 import cats.effect.{IO, Resource}
 import cats.implicits.{catsSyntaxEq => _, _}
-import housingfinder.algebras.LiveKijiji
+import ciris.Secret
+import eu.timepit.refined.auto._
+import eu.timepit.refined.cats._
+import eu.timepit.refined.types.string.NonEmptyString
+import housingfinder.algebras.{LiveCrypto, LiveKijiji, LiveUsers}
 import housingfinder.arbitraries._
+import housingfinder.config.data.PasswordSalt
+import housingfinder.domain.auth.{Password, Username}
 import housingfinder.domain.kijiji.CreateListing
-import natchez.Trace.Implicits.noop // needed for skunk
+import io.estatico.newtype.ops._
+import natchez.Trace.Implicits.noop
 import skunk.Session
 import suite.ResourceSuite
 
@@ -33,11 +40,30 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
             y <- k.getListings
             z <- k.addListing(c).attempt
           } yield assert(
-            x.isEmpty && y
-              .count(_.title.value === c.title.value) === 1 && z.isLeft
+            x.isEmpty &&
+              y.count(_.title.value === c.title.value) === 1 &&
+              z.isLeft
           )
         }
       }
     }
+
+    lazy val salt = Secret("secret": NonEmptyString).coerce[PasswordSalt]
+
+    forAll(MaxTests) { (username: Username, password: Password) =>
+      spec("Users") {
+        for {
+          c <- LiveCrypto.make[IO](salt)
+          u <- LiveUsers.make[IO](pool, c)
+          d <- u.create(username, password)
+          x <- u.find(username, password)
+          y <- u.find(username, "foo".coerce[Password])
+          z <- u.create(username, password).attempt
+        } yield assert(
+          x.count(_.id.value === d.value) === 1 && y.isEmpty && z.isLeft
+        )
+      }
+    }
+    
   }
 }
