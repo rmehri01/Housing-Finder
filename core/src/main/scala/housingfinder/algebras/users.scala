@@ -50,7 +50,7 @@ final class LiveUsers[F[_]: BracketThrow: GenUUID] private (
             .as(id)
             .handleErrorWith {
               case SqlState.UniqueViolation(_) =>
-                UserNameInUse(username).raiseError[F, UserId]
+                UsernameInUse(username).raiseError[F, UserId]
             }
         }
       }

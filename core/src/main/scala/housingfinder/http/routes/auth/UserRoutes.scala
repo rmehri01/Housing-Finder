@@ -3,7 +3,7 @@ package housingfinder.http.routes.auth
 import cats._
 import cats.implicits._
 import housingfinder.algebras.Auth
-import housingfinder.domain.auth.{CreateUser, UserNameInUse}
+import housingfinder.domain.auth.{CreateUser, UsernameInUse}
 import housingfinder.effects.MonadThrow
 import housingfinder.http.decoder._
 import housingfinder.http.json._
@@ -25,7 +25,7 @@ final class UserRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
           .newUser(user.username.toDomain, user.password.toDomain)
           .flatMap(Created(_))
           .recoverWith {
-            case UserNameInUse(u) =>
+            case UsernameInUse(u) =>
               Conflict(u.value)
           }
       }

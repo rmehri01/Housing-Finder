@@ -29,6 +29,20 @@ class AuthRoutesSpec extends AuthHttpTestSuite {
   }
 
   forAll { (u: Username, p: Password, t: JwtToken) =>
+    spec("POST create new user, username in use [ERROR]") {
+      POST(
+        Map("username" -> u.value, "password" -> p.value),
+        uri"/auth" / "users"
+      )
+        .flatMap { req =>
+          val routes =
+            new UserRoutes(failingAuthUsernameInUse(t)).routes
+          assertHttp(routes, req)(Status.Conflict, u)
+        }
+    }
+  }
+
+  forAll { (u: Username, p: Password, t: JwtToken) =>
     spec("POST login existing user [OK]") {
       POST(
         Map("username" -> u.value, "password" -> p.value),
@@ -38,6 +52,20 @@ class AuthRoutesSpec extends AuthHttpTestSuite {
           val routes =
             new LoginRoutes(dataAuth(t)).routes
           assertHttp(routes, req)(Status.Ok, t)
+        }
+    }
+  }
+
+  forAll { (u: Username, p: Password, t: JwtToken) =>
+    spec("POST login existing user, incorrect login [ERROR]") {
+      POST(
+        Map("username" -> u.value, "password" -> p.value),
+        uri"/auth" / "login"
+      )
+        .flatMap { req =>
+          val routes =
+            new LoginRoutes(failingAuthInvalidUserOrPassword(t)).routes
+          assertHttpStatus(routes, req)(Status.Forbidden)
         }
     }
   }
@@ -61,6 +89,21 @@ class AuthRoutesSpec extends AuthHttpTestSuite {
 
       override def login(username: Username, password: Password): IO[JwtToken] =
         IO.pure(token)
+    }
+
+  def failingAuthUsernameInUse(token: JwtToken): Auth[IO] =
+    new TestAuth {
+      override def newUser(
+          username: Username,
+          password: Password
+      ): IO[JwtToken] =
+        IO.raiseError(UsernameInUse(username)) *> IO.pure(token)
+    }
+
+  def failingAuthInvalidUserOrPassword(token: JwtToken): Auth[IO] =
+    new TestAuth {
+      override def login(username: Username, password: Password): IO[JwtToken] =
+        IO.raiseError(InvalidUserOrPassword(username)) *> IO.pure(token)
     }
 
 }

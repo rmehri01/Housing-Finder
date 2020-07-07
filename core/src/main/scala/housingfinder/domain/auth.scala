@@ -20,8 +20,8 @@ object auth {
 
   // TODO: restrictions on username and password params
   // user registration
-  @newtype case class UserNameParam(value: NonEmptyString) {
-    def toDomain: Username = Username(value.value.toLowerCase)
+  @newtype case class UsernameParam(value: NonEmptyString) {
+    def toDomain: Username = Username(value.value)
   }
 
   @newtype case class PasswordParam(value: NonEmptyString) {
@@ -29,11 +29,11 @@ object auth {
   }
 
   case class CreateUser(
-      username: UserNameParam,
+      username: UsernameParam,
       password: PasswordParam
   )
 
-  case class UserNameInUse(username: Username) extends NoStackTrace
+  case class UsernameInUse(username: Username) extends NoStackTrace
   case class InvalidUserOrPassword(username: Username) extends NoStackTrace
   case object UnsupportedOperation extends NoStackTrace
 
@@ -41,7 +41,7 @@ object auth {
 
   // user login
   case class LoginUser(
-      username: UserNameParam,
+      username: UsernameParam,
       password: PasswordParam
   )
 }

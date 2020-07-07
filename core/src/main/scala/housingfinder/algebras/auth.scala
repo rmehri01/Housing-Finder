@@ -92,7 +92,7 @@ final class LiveAuth[F[_]: MonadThrow] private (
 
   override def newUser(username: Username, password: Password): F[JwtToken] =
     users.find(username, password).flatMap {
-      case Some(_) => UserNameInUse(username).raiseError[F, JwtToken]
+      case Some(_) => UsernameInUse(username).raiseError[F, JwtToken]
       case None =>
         for {
           i <- users.create(username, password)
