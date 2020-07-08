@@ -63,7 +63,7 @@ object load {
         RedisConfig(redisUri),
         HttpServerConfig(
           host = "0.0.0.0",
-          port = 6379
+          port = 8080
         )
       )
     }
