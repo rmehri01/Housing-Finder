@@ -18,9 +18,6 @@ import suite.ResourceSuite
 
 class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
 
-  // For it:tests, one test is enough since it's fairly expensive
-  val MaxTests: PropertyCheckConfigParam = MinSuccessful(1)
-
   override def resources: Resource[IO, Resource[IO, Session[IO]]] =
     Session.pooled[IO](
       host = "localhost",
@@ -77,12 +74,12 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
             k <- LiveKijiji.make[IO](pool)
             _ <- k.addListing(c)
             l <- k.getListings
+            lId = l.head.uuid
 
             c <- LiveCrypto.make[IO](salt)
             u <- LiveUsers.make[IO](pool, c)
             d <- u.create(un, pw)
 
-            lId = l.head.uuid
             w <- LiveWatched.make[IO](pool)
             x <- w.getWatched(d)
             _ <- w.add(d, lId)

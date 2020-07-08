@@ -8,6 +8,9 @@ trait ResourceSuite[A] extends PureTestSuite with BeforeAndAfterAll {
 
   def resources: Resource[IO, A]
 
+  // For it:tests, one test is enough since it's fairly expensive
+  val MaxTests: PropertyCheckConfigParam = MinSuccessful(1)
+
   private[this] var res: A = _
   private[this] var cleanUp: IO[Unit] = _
 
