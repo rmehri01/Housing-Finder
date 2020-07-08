@@ -3,6 +3,7 @@ package housingfinder.domain
 import java.util.UUID
 
 import eu.timepit.refined.types.string.NonEmptyString
+import io.circe.Decoder
 import io.estatico.newtype.macros.newtype
 import javax.crypto.Cipher
 
@@ -44,4 +45,13 @@ object auth {
       username: UsernameParam,
       password: PasswordParam
   )
+
+  // admin auth
+  @newtype case class ClaimContent(uuid: UUID)
+
+  object ClaimContent {
+    implicit val jsonDecoder: Decoder[ClaimContent] =
+      Decoder.forProduct1("uuid")(ClaimContent.apply)
+  }
+
 }
