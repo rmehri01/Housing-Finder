@@ -22,8 +22,8 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
     Session.pooled[IO](
       host = "localhost",
       port = 5432,
-      user = "ryanmehri",
-      database = "housingfinder",
+      user = "postgres",
+      database = "store",
       max = 10
     )
 
