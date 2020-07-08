@@ -8,6 +8,7 @@ object Dependencies {
     val newtype = "0.4.4"
     val refined = "0.9.14"
     val squants = "1.6.0"
+    val log4cats = "1.1.1"
     val http4s = "0.21.6"
     val http4sJwtAuth = "0.0.5"
     val circe = "0.13.0"
@@ -24,6 +25,9 @@ object Dependencies {
     val kindProjector = "0.10.3"
     val betterMonadicFor = "0.3.0"
     val macroParadise = "2.1.1"
+
+    // Runtime
+    val logback = "1.2.3"
   }
 
   object Libraries {
@@ -44,6 +48,7 @@ object Dependencies {
     lazy val catsEffect = "org.typelevel" %% "cats-effect" % Versions.catsEffect
     lazy val newtype = "io.estatico" %% "newtype" % Versions.newtype
     lazy val squants = "org.typelevel" %% "squants" % Versions.squants
+    val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % Versions.log4cats
 
     lazy val refinedCats = refined("refined-cats")
     lazy val refinedCore = refined("refined")
@@ -84,6 +89,9 @@ object Dependencies {
       "com.olegpy" %% "better-monadic-for" % Versions.betterMonadicFor
     lazy val macroParadise =
       "org.scalamacros" % "paradise" % Versions.macroParadise cross CrossVersion.full
+
+    // Runtime
+    lazy val logback = "ch.qos.logback" % "logback-classic" % Versions.logback
   }
 
 }

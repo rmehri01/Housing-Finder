@@ -13,7 +13,7 @@ import housingfinder.config.environments._
 
 import scala.concurrent.duration._
 
-object loader {
+object load {
 
   def apply[F[_]: Async: ContextShift]: F[AppConfig] =
     env("SC_APP_ENV")
@@ -63,7 +63,7 @@ object loader {
         RedisConfig(redisUri),
         HttpServerConfig(
           host = "0.0.0.0",
-          port = 8080
+          port = 6379
         )
       )
     }
