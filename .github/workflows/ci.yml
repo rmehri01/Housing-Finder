@@ -10,9 +10,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v6
-      - name: Generate coverage report
+
+      - name: Start up Postgres and Redis
+        run: docker-compose up -d
+
+      - name: Test and generate coverage report
         run:
           sbt clean coverage test coverageReport
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.0.10
         with:
@@ -21,3 +26,6 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: true
+
+      - name: Shutting down Postgres and Redis
+        run: docker-compose down

@@ -16,7 +16,7 @@ import scala.concurrent.duration._
 object load {
 
   def apply[F[_]: Async: ContextShift]: F[AppConfig] =
-    env("SC_APP_ENV")
+    env("HF_APP_ENV")
       .as[AppEnvironment]
       .flatMap {
         case Test =>
@@ -34,11 +34,11 @@ object load {
       redisUri: RedisURI
   ): ConfigValue[AppConfig] =
     (
-      env("SC_JWT_SECRET_KEY").as[NonEmptyString].secret,
-      env("SC_JWT_CLAIM").as[NonEmptyString].secret,
-      env("SC_ACCESS_TOKEN_SECRET_KEY").as[NonEmptyString].secret,
-      env("SC_ADMIN_USER_TOKEN").as[NonEmptyString].secret,
-      env("SC_PASSWORD_SALT").as[NonEmptyString].secret
+      env("HF_JWT_SECRET_KEY").as[NonEmptyString].secret,
+      env("HF_JWT_CLAIM").as[NonEmptyString].secret,
+      env("HF_ACCESS_TOKEN_SECRET_KEY").as[NonEmptyString].secret,
+      env("HF_ADMIN_USER_TOKEN").as[NonEmptyString].secret,
+      env("HF_PASSWORD_SALT").as[NonEmptyString].secret
     ).parMapN { (secretKey, claimStr, tokenKey, adminToken, salt) =>
       AppConfig(
         AdminJwtConfig(
@@ -63,7 +63,7 @@ object load {
         RedisConfig(redisUri),
         HttpServerConfig(
           host = "0.0.0.0",
-          port = 6379
+          port = 8080
         )
       )
     }
