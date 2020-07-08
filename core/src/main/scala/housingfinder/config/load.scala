@@ -13,7 +13,7 @@ import housingfinder.config.environments._
 
 import scala.concurrent.duration._
 
-object loader {
+object load {
 
   def apply[F[_]: Async: ContextShift]: F[AppConfig] =
     env("SC_APP_ENV")

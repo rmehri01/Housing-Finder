@@ -8,6 +8,7 @@ object Dependencies {
     val newtype = "0.4.4"
     val refined = "0.9.14"
     val squants = "1.6.0"
+    val log4cats = "1.1.1"
     val http4s = "0.21.6"
     val http4sJwtAuth = "0.0.5"
     val circe = "0.13.0"
@@ -44,6 +45,7 @@ object Dependencies {
     lazy val catsEffect = "org.typelevel" %% "cats-effect" % Versions.catsEffect
     lazy val newtype = "io.estatico" %% "newtype" % Versions.newtype
     lazy val squants = "org.typelevel" %% "squants" % Versions.squants
+    val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % Versions.log4cats
 
     lazy val refinedCats = refined("refined-cats")
     lazy val refinedCore = refined("refined")
