@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-  shopping_cart:
+  housing_finder:
     restart: always
     image: housing-finder:latest
     network_mode: host
@@ -8,9 +8,9 @@ services:
       - "8080:8080"
     environment:
       - DEBUG=false
-      - SC_ACCESS_TOKEN_SECRET_KEY=5h0pp1ng_k4rt
-      - "SC_JWT_SECRET_KEY=-*5h0pp1ng_k4rt*-"
-      - 'SC_JWT_CLAIM={"uuid": "004b4457-71c3-4439-a1b2-03820263b59c"}'
-      - SC_ADMIN_USER_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkIjogIjAwNGI0NDU3LTcxYzMtNDQzOS1hMWIyLTAzODIwMjYzYjU5YyJ9.L97BnPScSAKY-BLkYu8G_n8h1U4LDOURUen14O22hD4
-      - SC_PASSWORD_SALT=06!grsnxXG0d*Pj496p6fuA*o
-      - SC_APP_ENV=test
+      - HF_ACCESS_TOKEN_SECRET_KEY=-*any_secret*-
+      - "HF_JWT_SECRET_KEY=any_secret"
+      - 'HF_JWT_CLAIM={"uuid": "6290c116-4152-11ea-b67f-2e728ce89025"}'
+      - HF_ADMIN_USER_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkIjogIjYyOTBjMTE2LTQxNTItMTFlYS1iNjdmLTJlNzI4Y2U4OTAyNSJ9.Gryl-fFp9JClbD8-Z46bIOS5sVJjHkjF8sTZOJFcYzc
+      - HF_PASSWORD_SALT=06!grsnxXG0d*Pj496p6fuA*o
+      - HF_APP_ENV=test
