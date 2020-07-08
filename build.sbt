@@ -18,6 +18,7 @@ lazy val commonSettings = Seq(
     Libraries.refinedCats,
     Libraries.squants,
     Libraries.log4cats,
+    Libraries.logback % Runtime,
     Libraries.http4sDsl,
     Libraries.http4sServer,
     Libraries.http4sClient,

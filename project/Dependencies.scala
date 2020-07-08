@@ -25,6 +25,9 @@ object Dependencies {
     val kindProjector = "0.10.3"
     val betterMonadicFor = "0.3.0"
     val macroParadise = "2.1.1"
+
+    // Runtime
+    val logback = "1.2.3"
   }
 
   object Libraries {
@@ -86,6 +89,9 @@ object Dependencies {
       "com.olegpy" %% "better-monadic-for" % Versions.betterMonadicFor
     lazy val macroParadise =
       "org.scalamacros" % "paradise" % Versions.macroParadise cross CrossVersion.full
+
+    // Runtime
+    lazy val logback = "ch.qos.logback" % "logback-classic" % Versions.logback
   }
 
 }
