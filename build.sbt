@@ -17,6 +17,8 @@ lazy val commonSettings = Seq(
     Libraries.refinedCore,
     Libraries.refinedCats,
     Libraries.squants,
+    Libraries.log4cats,
+    Libraries.logback % Runtime,
     Libraries.http4sDsl,
     Libraries.http4sServer,
     Libraries.http4sClient,
@@ -48,4 +50,12 @@ lazy val `housing-finder-root` =
 
 lazy val `housing-finder-core` = project
   .in(file("core"))
+  .enablePlugins(DockerPlugin, AshScriptPlugin)
+  .settings(
+    packageName in Docker := "housing-finder",
+    dockerBaseImage := "openjdk:8u201-jre-alpine3.9",
+    dockerExposedPorts ++= Seq(8080),
+    makeBatScripts := Seq(),
+    dockerUpdateLatest := true
+  )
   .settings(commonSettings: _*)
