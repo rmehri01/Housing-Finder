@@ -51,22 +51,22 @@ final class HttpApi[F[_]: Concurrent: Timer] private (
 
   // Open routes
   private val healthRoutes = new HealthRoutes[F](algebras.healthCheck).routes
-  private val kijijiRoutes = new KijijiRoutes[F](algebras.kijiji).routes
+  private val listingRoutes = new ListingRoutes[F](algebras.listings).routes
 
   // Secured routes
   private val watchedRoutes =
     new WatchedRoutes[F](algebras.watched).routes(usersMiddleware)
 
   // Admin routes
-  private val adminKijijiRoutes =
-    new AdminKijijiRoutes[F](algebras.kijiji).routes(adminMiddleware)
+  private val adminListingRoutes =
+    new AdminListingRoutes[F](algebras.listings).routes(adminMiddleware)
 
   // Combining all the http routes
   private val openRoutes: HttpRoutes[F] =
-    healthRoutes <+> kijijiRoutes <+> loginRoutes <+> userRoutes <+>
+    healthRoutes <+> listingRoutes <+> loginRoutes <+> userRoutes <+>
       logoutRoutes <+> watchedRoutes
 
-  private val adminRoutes: HttpRoutes[F] = adminKijijiRoutes
+  private val adminRoutes: HttpRoutes[F] = adminListingRoutes
 
   private val routes: HttpRoutes[F] = Router(
     version.v1 -> openRoutes,

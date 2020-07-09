@@ -3,7 +3,7 @@ package housingfinder.http.routes.secured
 import cats._
 import cats.implicits._
 import housingfinder.algebras.Watched
-import housingfinder.domain.kijiji.ListingId
+import housingfinder.domain.listings.ListingId
 import housingfinder.http.auth.users.CommonUser
 import housingfinder.http.json._
 import org.http4s._

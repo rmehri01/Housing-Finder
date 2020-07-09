@@ -9,7 +9,7 @@ import eu.timepit.refined.types.string.NonEmptyString
 import io.estatico.newtype.macros.newtype
 import squants.market.{CAD, Money}
 
-object kijiji {
+object listings {
   @newtype case class ListingId(value: UUID)
   @newtype case class Title(value: String)
   @newtype case class Address(value: String)

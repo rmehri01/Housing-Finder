@@ -3,7 +3,7 @@ package housingfinder
 import dev.profunktor.auth.jwt.JwtToken
 import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.AppStatus
-import housingfinder.domain.kijiji._
+import housingfinder.domain.listings._
 import housingfinder.generators._
 import org.scalacheck.Arbitrary
 

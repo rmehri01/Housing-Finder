@@ -1,9 +1,9 @@
 package housingfinder.http.routes.admin
 
 import cats.effect.IO
-import housingfinder.algebras.Kijiji
+import housingfinder.algebras.Listings
 import housingfinder.arbitraries._
-import housingfinder.domain.kijiji._
+import housingfinder.domain.listings._
 import housingfinder.http.json._
 import org.http4s.Method._
 import org.http4s._
@@ -11,36 +11,36 @@ import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import suite.AuthHttpTestSuite
 
-class AdminKijijiRoutesSpec extends AuthHttpTestSuite {
+class AdminListingRoutesSpec extends AuthHttpTestSuite {
   forAll { (c: CreateListingParam) =>
     spec("POST create listing [OK]") {
       POST(
         c,
-        uri"/kijiji"
+        uri"/listings"
       )
         .flatMap { req =>
           val routes =
-            new AdminKijijiRoutes(new TestKijiji).routes(adminUserMiddleware)
+            new AdminListingRoutes(new TestListings).routes(adminUserMiddleware)
           assertHttpStatus(routes, req)(Status.Created)
         }
     }
   }
 
   spec("PUT update listings [OK]") {
-    PUT(uri"/kijiji")
+    PUT(uri"/listings")
       .flatMap { req =>
         val routes =
-          new AdminKijijiRoutes(new TestKijiji).routes(adminUserMiddleware)
+          new AdminListingRoutes(new TestListings).routes(adminUserMiddleware)
         assertHttpStatus(routes, req)(Status.Ok)
       }
   }
 }
 
-protected class TestKijiji extends Kijiji[IO] {
-  override def getListings: IO[List[Listing]] = IO.pure(List.empty)
+protected class TestListings extends Listings[IO] {
+  override def get: IO[List[Listing]] = IO.pure(List.empty)
 
-  override def updateListings: IO[Unit] = IO.unit
+  override def update: IO[Unit] = IO.unit
 
-  override def addListing(createListing: CreateListing): IO[Unit] =
+  override def add(createListing: CreateListing): IO[Unit] =
     IO.unit
 }

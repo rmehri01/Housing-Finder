@@ -10,7 +10,7 @@ import housingfinder.algebras._
 import housingfinder.arbitraries._
 import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth.{Password, Username}
-import housingfinder.domain.kijiji.CreateListing
+import housingfinder.domain.listings.CreateListing
 import io.estatico.newtype.ops._
 import natchez.Trace.Implicits.noop
 import skunk.Session
@@ -29,13 +29,13 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
 
   withResources { pool =>
     forAll(MaxTests) { (c: CreateListing) =>
-      spec("Kijiji") {
-        LiveKijiji.make(pool).flatMap { k =>
+      spec("Listings") {
+        LiveListings.make(pool).flatMap { k =>
           for {
-            x <- k.getListings
-            _ <- k.addListing(c)
-            y <- k.getListings
-            z <- k.addListing(c).attempt
+            x <- k.get
+            _ <- k.add(c)
+            y <- k.get
+            z <- k.add(c).attempt
           } yield assert(
             x.isEmpty &&
               y.count(_.title.value === c.title.value) === 1 &&
@@ -71,9 +71,9 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
       ) =>
         spec("Watched") {
           for {
-            k <- LiveKijiji.make[IO](pool)
-            _ <- k.addListing(c)
-            l <- k.getListings
+            k <- LiveListings.make[IO](pool)
+            _ <- k.add(c)
+            l <- k.get
             lId = l.head.uuid
 
             c <- LiveCrypto.make[IO](salt)
