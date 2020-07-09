@@ -3,7 +3,7 @@ package housingfinder.http.routes.auth
 import cats.effect.IO
 import dev.profunktor.auth.jwt.JwtToken
 import housingfinder.algebras.Auth
-import housingfinder.arbitraries._
+import utilities.arbitraries._
 import housingfinder.domain.auth._
 import housingfinder.http.json._
 import org.http4s.Method._

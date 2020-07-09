@@ -15,12 +15,12 @@ import eu.timepit.refined.auto._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
 import housingfinder.algebras.{LiveAuth, LiveTokens, LiveUsersAuth, Users}
-import housingfinder.arbitraries._
+import utilities.arbitraries._
 import housingfinder.config.data.{JwtSecretKeyConfig, TokenExpiration}
 import housingfinder.domain.auth.{Password, UserId, Username}
 import housingfinder.effects.GenUUID
 import housingfinder.http.auth.users.{User, UserJwtAuth}
-import housingfinder.logger.NoOp
+import utilities.logger.NoOp
 import pdi.jwt.{JwtAlgorithm, JwtClaim}
 import suite.ResourceSuite
 

@@ -7,7 +7,7 @@ import eu.timepit.refined.auto._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
 import housingfinder.algebras._
-import housingfinder.arbitraries._
+import utilities.arbitraries._
 import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth.{Password, Username}
 import housingfinder.domain.listings.CreateListing

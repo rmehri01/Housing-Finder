@@ -2,14 +2,20 @@ package tokens
 
 import cats.effect._
 import dev.profunktor.auth.jwt._
-import io.circe.Decoder
 import io.circe.parser.{decode => jsonDecode}
+import io.circe.{Decoder, Json}
 import io.estatico.newtype.macros._
 import pdi.jwt._
+import pdi.jwt.algorithms.JwtHmacAlgorithm
 
 // Taken from https://github.com/gvolpe/pfps-shopping-cart/blob/master/modules/core/src/main/scala/tokens/generator.scala
 // To make it runnable, change `class` for `object`.
-class TokenGenerator extends IOApp {
+class RunnableTokenGenerator extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] =
+    TokenGenerator.run
+}
+
+object TokenGenerator {
   import data._
 
   def putStrLn[A](a: A): IO[Unit] = IO(println(a))
@@ -17,41 +23,41 @@ class TokenGenerator extends IOApp {
   /* ---- Encoding stuff ---- */
 
   // A Claim can be any valid JSON
-  val claim = JwtClaim(
+  val claim: JwtClaim = JwtClaim(
     """
       {"claim": "example-claim"}
     """
   )
 
   // Any valid string
-  val secretKey = JwtSecretKey("any-secret")
+  val secretKey: JwtSecretKey = JwtSecretKey("any-secret")
 
-  val algo = JwtAlgorithm.HS256
+  val algo: JwtHmacAlgorithm = JwtAlgorithm.HS256
 
-  val mkToken: IO[JwtToken] =
-    jwtEncode[IO](claim, secretKey, algo)
+  def mkToken(c: JwtClaim, s: JwtSecretKey): IO[JwtToken] =
+    jwtEncode[IO](c, s, algo)
 
   /* ---- Decoding stuff ---- */
 
-  val jwtAuth = JwtAuth.hmac(secretKey.value, algo)
+  val jwtAuth: JwtSymmetricAuth = JwtAuth.hmac(secretKey.value, algo)
 
-  def decodeToken(token: JwtToken): IO[Claim] =
-    jwtDecode[IO](token, jwtAuth).flatMap { c =>
+  def decodeToken(token: JwtToken, a: JwtSymmetricAuth): IO[Claim] =
+    jwtDecode[IO](token, a).flatMap { c =>
       IO.fromEither(jsonDecode[Claim](c.content))
     }
 
-  def run(args: List[String]): IO[ExitCode] =
+  def run: IO[ExitCode] =
     for {
-      t <- mkToken
+      t <- mkToken(claim, secretKey)
       _ <- putStrLn(t)
-      c <- decodeToken(t)
+      c <- decodeToken(t, jwtAuth)
       _ <- putStrLn(c)
     } yield ExitCode.Success
 
 }
 
 object data {
-  @newtype case class Claim(value: String)
+  @newtype case class Claim(value: Json)
 
   object Claim {
     implicit val jsonDecoder: Decoder[Claim] =
