@@ -1,4 +1,4 @@
-package housingfinder
+package utilities
 
 import cats.effect.IO
 import cats.effect.concurrent.Ref

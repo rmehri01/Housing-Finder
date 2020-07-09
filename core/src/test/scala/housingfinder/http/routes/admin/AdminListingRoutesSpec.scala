@@ -2,7 +2,7 @@ package housingfinder.http.routes.admin
 
 import cats.effect.IO
 import housingfinder.algebras.Listings
-import housingfinder.arbitraries._
+import utilities.arbitraries._
 import housingfinder.domain.listings._
 import housingfinder.http.json._
 import org.http4s.Method._

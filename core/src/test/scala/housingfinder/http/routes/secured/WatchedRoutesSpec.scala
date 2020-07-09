@@ -2,7 +2,7 @@ package housingfinder.http.routes.secured
 
 import cats.effect.IO
 import housingfinder.algebras.Watched
-import housingfinder.arbitraries._
+import utilities.arbitraries._
 import housingfinder.domain.listings.{Listing, ListingId}
 import housingfinder.domain.{auth, listings}
 import housingfinder.http.json._

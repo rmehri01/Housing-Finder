@@ -2,7 +2,7 @@ package housingfinder.http.routes
 
 import cats.effect.IO
 import housingfinder.algebras.HealthCheck
-import housingfinder.arbitraries._
+import utilities.arbitraries._
 import housingfinder.domain.healthcheck.{AppStatus, PostgresStatus, RedisStatus}
 import org.http4s.Method._
 import org.http4s._

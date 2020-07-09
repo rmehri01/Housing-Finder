@@ -1,4 +1,4 @@
-package housingfinder
+package utilities
 
 import java.time.{LocalDateTime, ZoneOffset}
 import java.util.UUID
