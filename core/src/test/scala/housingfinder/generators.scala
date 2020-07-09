@@ -8,7 +8,7 @@ import eu.timepit.refined.api.Refined
 import eu.timepit.refined.string.ValidBigDecimal
 import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.{AppStatus, PostgresStatus, RedisStatus}
-import housingfinder.domain.kijiji._
+import housingfinder.domain.listings._
 import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops._
 import org.scalacheck.{Arbitrary, Gen}

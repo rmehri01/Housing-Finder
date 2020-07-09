@@ -4,7 +4,7 @@ import cats.Applicative
 import dev.profunktor.auth.jwt.JwtToken
 import housingfinder.domain.auth.{CreateUserParam, LoginUserParam}
 import housingfinder.domain.healthcheck.AppStatus
-import housingfinder.domain.kijiji.{CreateListingParam, Listing}
+import housingfinder.domain.listings.{CreateListingParam, Listing}
 import housingfinder.http.auth.users.User
 import io.circe.generic.semiauto._
 import io.circe.refined._
