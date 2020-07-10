@@ -1,11 +1,11 @@
-package housingfinder
+package utilities
 
-import dev.profunktor.auth.jwt.JwtToken
+import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken}
 import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.AppStatus
-import housingfinder.domain.kijiji._
-import housingfinder.generators._
+import housingfinder.domain.listings._
 import org.scalacheck.Arbitrary
+import utilities.generators._
 
 object arbitraries {
   implicit val arbListing: Arbitrary[Listing] =
@@ -37,4 +37,10 @@ object arbitraries {
 
   implicit val arbPassword: Arbitrary[Password] =
     Arbitrary(cbStr[Password])
+
+  implicit val arbJwtSecretKey: Arbitrary[JwtSecretKey] =
+    Arbitrary(genJwtSecretKey)
+
+  implicit val arbPasswordSalt =
+    Arbitrary(genPasswordSalt)
 }

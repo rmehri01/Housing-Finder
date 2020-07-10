@@ -3,7 +3,6 @@ package housingfinder.http.routes.auth
 import cats.effect.IO
 import dev.profunktor.auth.jwt.JwtToken
 import housingfinder.algebras.Auth
-import housingfinder.arbitraries._
 import housingfinder.domain.auth._
 import housingfinder.http.json._
 import org.http4s.Method._
@@ -11,6 +10,7 @@ import org.http4s._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import suite.AuthHttpTestSuite
+import utilities.arbitraries._
 
 class AuthRoutesSpec extends AuthHttpTestSuite {
 

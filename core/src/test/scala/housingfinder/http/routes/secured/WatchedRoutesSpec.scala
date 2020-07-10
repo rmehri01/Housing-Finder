@@ -2,15 +2,15 @@ package housingfinder.http.routes.secured
 
 import cats.effect.IO
 import housingfinder.algebras.Watched
-import housingfinder.arbitraries._
-import housingfinder.domain.kijiji.{Listing, ListingId}
-import housingfinder.domain.{auth, kijiji}
+import housingfinder.domain.listings.{Listing, ListingId}
+import housingfinder.domain.{auth, listings}
 import housingfinder.http.json._
 import org.http4s.Method._
 import org.http4s._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import suite.AuthHttpTestSuite
+import utilities.arbitraries._
 
 class WatchedRoutesSpec extends AuthHttpTestSuite {
 
@@ -53,14 +53,17 @@ class WatchedRoutesSpec extends AuthHttpTestSuite {
 }
 
 protected class TestWatched extends Watched[IO] {
-  override def getWatched(userId: auth.UserId): IO[List[kijiji.Listing]] =
+  override def getWatched(userId: auth.UserId): IO[List[listings.Listing]] =
     IO.pure(List.empty)
 
-  override def add(userId: auth.UserId, listingId: kijiji.ListingId): IO[Unit] =
+  override def add(
+      userId: auth.UserId,
+      listingId: listings.ListingId
+  ): IO[Unit] =
     IO.unit
 
   override def remove(
       userId: auth.UserId,
-      listingId: kijiji.ListingId
+      listingId: listings.ListingId
   ): IO[Unit] = IO.unit
 }

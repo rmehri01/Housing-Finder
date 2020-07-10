@@ -81,6 +81,7 @@ object Dependencies {
     lazy val scalaCheck = "org.scalacheck" %% "scalacheck" % Versions.scalaCheck
     lazy val scalaTestPlus =
       "org.scalatestplus" %% "scalacheck-1-14" % Versions.scalaTestPlus
+    lazy val circeTesting = circe("circe-testing")
 
     // Compiler
     lazy val kindProjector =

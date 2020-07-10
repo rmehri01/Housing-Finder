@@ -2,13 +2,13 @@ package housingfinder.http.routes
 
 import cats.effect.IO
 import housingfinder.algebras.HealthCheck
-import housingfinder.arbitraries._
 import housingfinder.domain.healthcheck.{AppStatus, PostgresStatus, RedisStatus}
 import org.http4s.Method._
 import org.http4s._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import suite.HttpTestSuite
+import utilities.arbitraries._
 
 class HealthRoutesSpec extends HttpTestSuite {
 

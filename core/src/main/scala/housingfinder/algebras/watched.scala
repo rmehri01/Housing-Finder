@@ -3,7 +3,7 @@ package housingfinder.algebras
 import cats.effect.{Resource, Sync}
 import cats.implicits._
 import housingfinder.domain.auth.UserId
-import housingfinder.domain.kijiji._
+import housingfinder.domain.listings._
 import housingfinder.effects.BracketThrow
 import housingfinder.ext.skunkx._
 import skunk._
@@ -56,7 +56,7 @@ object WatchedQueries {
     case u ~ l => u.value ~ l.value
   }
 
-  import KijijiQueries.codec
+  import ListingQueries.codec
   val selectAll: Query[UserId, Listing] =
     sql"""
         SELECT l.*

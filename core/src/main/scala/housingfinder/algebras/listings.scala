@@ -2,7 +2,7 @@ package housingfinder.algebras
 
 import cats.effect._
 import cats.implicits._
-import housingfinder.domain.kijiji._
+import housingfinder.domain.listings._
 import housingfinder.effects.GenUUID
 import housingfinder.ext.skunkx._
 import skunk._
@@ -10,30 +10,30 @@ import skunk.codec.all._
 import skunk.implicits._
 import squants.market._
 
-trait Kijiji[F[_]] {
+trait Listings[F[_]] {
   // TODO: some way to filter out listings by desired properties
-  def getListings: F[List[Listing]]
-  def updateListings: F[Unit]
-  def addListing(createListing: CreateListing): F[Unit]
+  def get: F[List[Listing]]
+  def update: F[Unit]
+  def add(createListing: CreateListing): F[Unit]
 }
 
-object LiveKijiji {
-  def make[F[_]: Sync](sessionPool: Resource[F, Session[F]]): F[Kijiji[F]] =
-    Sync[F].delay(new LiveKijiji[F](sessionPool))
+object LiveListings {
+  def make[F[_]: Sync](sessionPool: Resource[F, Session[F]]): F[Listings[F]] =
+    Sync[F].delay(new LiveListings[F](sessionPool))
 }
 
-final class LiveKijiji[F[_]: Sync] private (
+final class LiveListings[F[_]: Sync] private (
     sessionPool: Resource[F, Session[F]]
-) extends Kijiji[F] {
-  import KijijiQueries._
+) extends Listings[F] {
+  import ListingQueries._
 
-  override def getListings: F[List[Listing]] =
+  override def get: F[List[Listing]] =
     sessionPool.use(_.execute(selectAll))
 
   // TODO: scrape and for each, add listing
-  override def updateListings: F[Unit] = ???
+  override def update: F[Unit] = ???
 
-  override def addListing(listing: CreateListing): F[Unit] =
+  override def add(listing: CreateListing): F[Unit] =
     sessionPool.use { session =>
       session.prepare(insertListing).use { cmd =>
         GenUUID[F].make[ListingId].flatMap { id =>
@@ -54,14 +54,14 @@ final class LiveKijiji[F[_]: Sync] private (
     }
 }
 
-private object KijijiQueries {
+private object ListingQueries {
   val codec: Codec[Listing] =
     (uuid.cimap[ListingId] ~ varchar.cimap[Title] ~ varchar
       .cimap[Address] ~ numeric.imap(CAD.apply)(_.amount) ~ varchar
       .cimap[Description] ~ timestamp).imap {
       case i ~ t ~ a ~ p ~ de ~ da => Listing(i, t, a, p, de, da)
-    }(k =>
-      k.uuid ~ k.title ~ k.address ~ k.price ~ k.description ~ k.datePosted
+    }(l =>
+      l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted
     )
 
   val selectAll: Query[Void, Listing] =

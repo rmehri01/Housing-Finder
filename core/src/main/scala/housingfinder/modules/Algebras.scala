@@ -13,14 +13,14 @@ object Algebras {
       sessionPool: Resource[F, Session[F]]
   ): F[Algebras[F]] =
     for {
-      kijiji <- LiveKijiji.make[F](sessionPool)
+      listings <- LiveListings.make[F](sessionPool)
       watched <- LiveWatched.make[F](sessionPool)
       health <- LiveHealthCheck.make[F](sessionPool, redis)
-    } yield new Algebras[F](kijiji, watched, health)
+    } yield new Algebras[F](listings, watched, health)
 }
 
 final class Algebras[F[_]] private (
-    val kijiji: Kijiji[F],
+    val listings: Listings[F],
     val watched: Watched[F],
     val healthCheck: HealthCheck[F]
 )
