@@ -60,8 +60,8 @@ private object ListingQueries {
       .cimap[Address] ~ numeric.imap(CAD.apply)(_.amount) ~ varchar
       .cimap[Description] ~ timestamp).imap {
       case i ~ t ~ a ~ p ~ de ~ da => Listing(i, t, a, p, de, da)
-    }(k =>
-      k.uuid ~ k.title ~ k.address ~ k.price ~ k.description ~ k.datePosted
+    }(l =>
+      l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted
     )
 
   val selectAll: Query[Void, Listing] =

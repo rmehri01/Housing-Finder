@@ -30,12 +30,12 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
   withResources { pool =>
     forAll(MaxTests) { (c: CreateListing) =>
       spec("Listings") {
-        LiveListings.make(pool).flatMap { k =>
+        LiveListings.make(pool).flatMap { l =>
           for {
-            x <- k.get
-            _ <- k.add(c)
-            y <- k.get
-            z <- k.add(c).attempt
+            x <- l.get
+            _ <- l.add(c)
+            y <- l.get
+            z <- l.add(c).attempt
           } yield assert(
             x.isEmpty &&
               y.count(_.title.value === c.title.value) === 1 &&
@@ -71,9 +71,9 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
       ) =>
         spec("Watched") {
           for {
-            k <- LiveListings.make[IO](pool)
-            _ <- k.add(c)
-            l <- k.get
+            l <- LiveListings.make[IO](pool)
+            _ <- l.add(c)
+            l <- l.get
             lId = l.head.uuid
 
             c <- LiveCrypto.make[IO](salt)
