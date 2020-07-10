@@ -1,5 +1,7 @@
 package housingfinder.algebras
 
+import java.util.Base64
+
 import cats.effect.Sync
 import cats.implicits._
 import housingfinder.config.data.PasswordSalt
@@ -17,7 +19,7 @@ object LiveCrypto {
     Sync[F]
       .delay {
         val salt = secret.value.value.value.getBytes("UTF-8")
-        val keySpec = new PBEKeySpec("password".toCharArray(), salt, 65536, 256)
+        val keySpec = new PBEKeySpec("password".toCharArray, salt, 65536, 256)
         val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
         val bytes = factory.generateSecret(keySpec).getEncoded
         val sKeySpec = new SecretKeySpec(bytes, "AES")
@@ -42,15 +44,16 @@ final class LiveCrypto private (
 
   override def encrypt(password: Password): EncryptedPassword = {
     val bytes = password.value.getBytes("UTF-8")
-    val result = new String(eCipher.value.doFinal(bytes), "UTF-8")
-    val removeNull = result.replaceAll("\\u0000", Key)
+    val result = eCipher.value.doFinal(bytes)
+    val encodeBase64 = Base64.getEncoder.encodeToString(result)
+    val removeNull = encodeBase64.replaceAll("\\u0000", Key)
     EncryptedPassword(removeNull)
   }
 
   override def decrypt(password: EncryptedPassword): Password = {
-    val bytes = password.value.getBytes("UTF-8")
-    val result = new String(dCipher.value.doFinal(bytes), "UTF-8")
-    val insertNull = result.replaceAll(Key, "\\u0000")
-    Password(insertNull)
+    val insertNull = password.value.replaceAll(Key, "\\u0000")
+    val decodeBase64 = Base64.getDecoder.decode(insertNull)
+    val result = new String(dCipher.value.doFinal(decodeBase64), "UTF-8")
+    Password(result)
   }
 }
