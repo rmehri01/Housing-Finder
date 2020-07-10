@@ -2,7 +2,6 @@ package housingfinder.http.routes.secured
 
 import cats.effect.IO
 import housingfinder.algebras.Watched
-import utilities.arbitraries._
 import housingfinder.domain.listings.{Listing, ListingId}
 import housingfinder.domain.{auth, listings}
 import housingfinder.http.json._
@@ -11,6 +10,7 @@ import org.http4s._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import suite.AuthHttpTestSuite
+import utilities.arbitraries._
 
 class WatchedRoutesSpec extends AuthHttpTestSuite {
 

@@ -38,6 +38,9 @@ object arbitraries {
   implicit val arbPassword: Arbitrary[Password] =
     Arbitrary(cbStr[Password])
 
-  implicit val arbJwtSecretKey =
-    Arbitrary(genNonEmptyString.map(JwtSecretKey))
+  implicit val arbJwtSecretKey: Arbitrary[JwtSecretKey] =
+    Arbitrary(genJwtSecretKey)
+
+  implicit val arbPasswordSalt =
+    Arbitrary(genPasswordSalt)
 }

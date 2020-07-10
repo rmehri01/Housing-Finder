@@ -2,7 +2,6 @@ package housingfinder.http.routes
 
 import cats.effect.IO
 import housingfinder.algebras.Listings
-import utilities.arbitraries._
 import housingfinder.domain.listings
 import housingfinder.domain.listings.Listing
 import housingfinder.http.json._
@@ -11,6 +10,7 @@ import org.http4s._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import suite.HttpTestSuite
+import utilities.arbitraries._
 
 class ListingRoutesSpec extends HttpTestSuite {
 

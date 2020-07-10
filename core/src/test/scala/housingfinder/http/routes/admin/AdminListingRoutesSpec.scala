@@ -2,7 +2,6 @@ package housingfinder.http.routes.admin
 
 import cats.effect.IO
 import housingfinder.algebras.Listings
-import utilities.arbitraries._
 import housingfinder.domain.listings._
 import housingfinder.http.json._
 import org.http4s.Method._
@@ -10,6 +9,7 @@ import org.http4s._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import suite.AuthHttpTestSuite
+import utilities.arbitraries._
 
 class AdminListingRoutesSpec extends AuthHttpTestSuite {
   forAll { (c: CreateListingParam) =>

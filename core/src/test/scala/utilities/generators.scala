@@ -3,9 +3,15 @@ package utilities
 import java.time.{LocalDateTime, ZoneOffset}
 import java.util.UUID
 
-import dev.profunktor.auth.jwt.JwtToken
+import cats.implicits._
+import ciris.Secret
+import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken}
 import eu.timepit.refined.api.Refined
+import eu.timepit.refined.auto._
+import eu.timepit.refined.cats._
 import eu.timepit.refined.string.ValidBigDecimal
+import eu.timepit.refined.types.string.NonEmptyString
+import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.{AppStatus, PostgresStatus, RedisStatus}
 import housingfinder.domain.listings._
@@ -107,4 +113,9 @@ object generators {
   def genStrRefinedUnsafe[P, A](c: Refined[String, P] => A): Gen[A] =
     genNonEmptyString.map(s => c(Refined.unsafeApply(s)))
 
+  val genJwtSecretKey: Gen[JwtSecretKey] =
+    genNonEmptyString.map(JwtSecretKey)
+
+  val genPasswordSalt: Gen[PasswordSalt] =
+    Secret("secret": NonEmptyString).coerce[PasswordSalt]
 }
