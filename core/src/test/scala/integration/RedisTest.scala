@@ -70,7 +70,6 @@ class RedisTest extends ResourceSuite[RedisCommands[IO, String, String]] {
 }
 
 protected class TestUsers(un: Username) extends Users[IO] {
-  // TODO: look into deriving eq of newtypes
   def find(username: Username, password: Password): IO[Option[User]] =
     Eq[String]
       .eqv(username.value, un.value)

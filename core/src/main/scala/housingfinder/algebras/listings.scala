@@ -75,11 +75,17 @@ private object ListingQueries {
          ORDER BY date_posted DESC
        """.query(codec)
 
+  // if the url is the same, updates the listing instead of creating a new one
   def insertListings(n: Int): Command[List[Listing]] = {
     val listingsCodec = codec.list(n)
     sql"""
-         INSERT INTO listings
-         VALUES $listingsCodec
+        INSERT INTO listings (uuid, title, address, price, description, date_posted, url)
+        VALUES ($listingsCodec)
+        ON CONFLICT (url) DO UPDATE
+            SET title       = EXCLUDED.title,
+                address     = EXCLUDED.address,
+                description = EXCLUDED.address,
+                url         = EXCLUDED.url
        """.command
   }
 }
