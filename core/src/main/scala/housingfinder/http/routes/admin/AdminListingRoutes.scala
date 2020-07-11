@@ -21,8 +21,8 @@ final class AdminListingRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
 
   private val httpRoutes: AuthedRoutes[AdminUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root as _ =>
-      ar.req.decodeR[CreateListingParam] { listing =>
-        listings.add(listing.toDomain) *>
+      ar.req.decodeR[List[CreateListingParam]] { cs =>
+        listings.addAll(cs.map(_.toDomain)) *>
           Created()
       }
 

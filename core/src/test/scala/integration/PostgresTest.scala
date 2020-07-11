@@ -33,9 +33,9 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
         LiveListings.make(pool).flatMap { l =>
           for {
             x <- l.get
-            _ <- l.add(c)
+            _ <- l.addAll(List(c))
             y <- l.get
-            z <- l.add(c).attempt
+            z <- l.addAll(List(c)).attempt
           } yield assert(
             x.isEmpty &&
               y.count(_.title.value === c.title.value) === 1 &&
@@ -72,7 +72,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
         spec("Watched") {
           for {
             l <- LiveListings.make[IO](pool)
-            _ <- l.add(c)
+            _ <- l.addAll(List(c))
             l <- l.get
             lId = l.head.uuid
 
