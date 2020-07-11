@@ -45,7 +45,8 @@ final class LiveListings[F[_]: Sync] private (
                 listing.address,
                 listing.price,
                 listing.description,
-                listing.dateTime
+                listing.dateTime,
+                listing.listingUrl
               )
             )
             .void
@@ -58,10 +59,10 @@ private object ListingQueries {
   val codec: Codec[Listing] =
     (uuid.cimap[ListingId] ~ varchar.cimap[Title] ~ varchar
       .cimap[Address] ~ numeric.imap(CAD.apply)(_.amount) ~ varchar
-      .cimap[Description] ~ timestamp).imap {
-      case i ~ t ~ a ~ p ~ de ~ da => Listing(i, t, a, p, de, da)
+      .cimap[Description] ~ timestamp ~ varchar.cimap[ListingUrl]).imap {
+      case i ~ t ~ a ~ p ~ de ~ da ~ u => Listing(i, t, a, p, de, da, u)
     }(l =>
-      l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted
+      l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted ~ l.url
     )
 
   val selectAll: Query[Void, Listing] =

@@ -1,7 +1,10 @@
 package suite
 
 import cats.Eq
-import org.scalactic.TripleEqualsSupport.{AToBEquivalenceConstraint, BToAEquivalenceConstraint}
+import org.scalactic.TripleEqualsSupport.{
+  AToBEquivalenceConstraint,
+  BToAEquivalenceConstraint
+}
 import org.scalactic._
 
 trait LowPriorityCatsConstraints extends TripleEquals {
