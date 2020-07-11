@@ -1,6 +1,7 @@
 package utilities
 
 import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken}
+import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.AppStatus
 import housingfinder.domain.listings._
@@ -19,6 +20,9 @@ object arbitraries {
 
   implicit val arbListingId: Arbitrary[ListingId] =
     Arbitrary(cbUuid[ListingId])
+
+  implicit val arbTitle: Arbitrary[Title] =
+    Arbitrary(cbStr[Title])
 
   implicit val arbJwtToken: Arbitrary[JwtToken] =
     Arbitrary(genJwtToken)
@@ -41,6 +45,6 @@ object arbitraries {
   implicit val arbJwtSecretKey: Arbitrary[JwtSecretKey] =
     Arbitrary(genJwtSecretKey)
 
-  implicit val arbPasswordSalt =
+  implicit val arbPasswordSalt: Arbitrary[PasswordSalt] =
     Arbitrary(genPasswordSalt)
 }

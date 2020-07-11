@@ -9,7 +9,7 @@ import eu.timepit.refined.types.string.NonEmptyString
 import housingfinder.algebras._
 import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth.{Password, Username}
-import housingfinder.domain.listings.CreateListing
+import housingfinder.domain.listings.{CreateListing, Title}
 import io.estatico.newtype.ops._
 import natchez.Trace.Implicits.noop
 import skunk.Session
@@ -28,18 +28,21 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
     )
 
   withResources { pool =>
-    forAll(MaxTests) { (c: CreateListing) =>
-      spec("Listings") {
+    forAll(MaxTests) { (c: CreateListing, t: Title) =>
+      spec("Listings insert single") {
         LiveListings.make(pool).flatMap { l =>
           for {
             x <- l.get
             _ <- l.addAll(List(c))
             y <- l.get
-            z <- l.addAll(List(c)).attempt
+            yId = y.head.uuid
+
+            _ <- l.addAll(List(c.copy(title = t)))
+            z <- l.get
           } yield assert(
             x.isEmpty &&
               y.count(_.title.value === c.title.value) === 1 &&
-              z.isLeft
+              z.count(listing => listing.uuid == yId && listing.title == t) === 1
           )
         }
       }
