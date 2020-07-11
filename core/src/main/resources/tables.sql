@@ -7,7 +7,7 @@ CREATE TABLE listings
         CONSTRAINT positive_price CHECK ( price > 0 ),
     description VARCHAR        NOT NULL,
     date_posted TIMESTAMP      NOT NULL,
-    url         VARCHAR        NOT NULL
+    url         VARCHAR UNIQUE NOT NULL
 );
 
 CREATE TABLE users
