@@ -2,8 +2,7 @@ package housingfinder.http.routes
 
 import cats.effect.IO
 import housingfinder.algebras.Listings
-import housingfinder.domain.listings
-import housingfinder.domain.listings.Listing
+import housingfinder.domain.listings.{CreateListing, Listing}
 import housingfinder.http.json._
 import org.http4s.Method._
 import org.http4s._
@@ -45,10 +44,10 @@ class ListingRoutesSpec extends HttpTestSuite {
 }
 
 protected class TestListings extends Listings[IO] {
-  override def get: IO[List[listings.Listing]] = IO.pure(List.empty)
+  override def get: IO[List[Listing]] = IO.pure(List.empty)
 
   override def update: IO[Unit] = IO.unit
 
-  override def add(createListing: listings.CreateListing): IO[Unit] =
+  override def addAll(createListings: List[CreateListing]): IO[Unit] =
     IO.unit
 }

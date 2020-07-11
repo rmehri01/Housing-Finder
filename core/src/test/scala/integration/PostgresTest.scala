@@ -1,5 +1,6 @@
 package integration
 
+import cats.data.NonEmptyList
 import cats.effect.{IO, Resource}
 import cats.implicits.{catsSyntaxEq => _, _}
 import ciris.Secret
@@ -9,7 +10,7 @@ import eu.timepit.refined.types.string.NonEmptyString
 import housingfinder.algebras._
 import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth.{Password, Username}
-import housingfinder.domain.listings.CreateListing
+import housingfinder.domain.listings.{CreateListing, Title}
 import io.estatico.newtype.ops._
 import natchez.Trace.Implicits.noop
 import skunk.Session
@@ -28,21 +29,32 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
     )
 
   withResources { pool =>
-    forAll(MaxTests) { (c: CreateListing) =>
-      spec("Listings") {
-        LiveListings.make(pool).flatMap { l =>
-          for {
-            x <- l.get
-            _ <- l.add(c)
-            y <- l.get
-            z <- l.add(c).attempt
-          } yield assert(
-            x.isEmpty &&
-              y.count(_.title.value === c.title.value) === 1 &&
-              z.isLeft
-          )
+    forAll(MaxTests) {
+      (c: CreateListing, t: Title, cs: NonEmptyList[CreateListing]) =>
+        spec("Listings") {
+          LiveListings.make(pool).flatMap { l =>
+            for {
+              x <- l.get
+              _ <- l.addAll(List(c))
+              y <- l.get
+
+              yId = y.head.uuid
+              _ <- l.addAll(List(c.copy(title = t)))
+              z <- l.get
+
+              _ <- l.addAll(cs.toList)
+              a <- l.get
+            } yield assert(
+              x.isEmpty &&
+                y.count(_.title.value === c.title.value) === 1 &&
+                z.count(listing =>
+                  listing.uuid == yId && listing.title == t
+                ) === 1 &&
+                a.filter(_.title != t)
+                  .forall(li => cs.exists(cr => cr.title == li.title))
+            )
+          }
         }
-      }
     }
 
     lazy val salt = Secret("secret": NonEmptyString).coerce[PasswordSalt]
@@ -72,7 +84,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
         spec("Watched") {
           for {
             l <- LiveListings.make[IO](pool)
-            _ <- l.add(c)
+            _ <- l.addAll(List(c))
             l <- l.get
             lId = l.head.uuid
 

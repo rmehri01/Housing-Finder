@@ -14,7 +14,7 @@ trait Listings[F[_]] {
   // TODO: some way to filter out listings by desired properties
   def get: F[List[Listing]]
   def update: F[Unit]
-  def add(createListing: CreateListing): F[Unit]
+  def addAll(createListings: List[CreateListing]): F[Unit]
 }
 
 object LiveListings {
@@ -33,19 +33,24 @@ final class LiveListings[F[_]: Sync] private (
   // TODO: scrape and for each, add listing
   override def update: F[Unit] = ???
 
-  override def add(listing: CreateListing): F[Unit] =
+  override def addAll(createListings: List[CreateListing]): F[Unit] =
     sessionPool.use { session =>
-      session.prepare(insertListing).use { cmd =>
-        GenUUID[F].make[ListingId].flatMap { id =>
+      val len = createListings.length
+
+      session.prepare(insertListings(len)).use { cmd =>
+        GenUUID[F].make[ListingId].replicateA(len).flatMap { ids =>
           cmd
             .execute(
-              Listing(
-                id,
-                listing.title,
-                listing.address,
-                listing.price,
-                listing.description,
-                listing.dateTime
+              (ids, createListings).mapN((id, c) =>
+                Listing(
+                  id,
+                  c.title,
+                  c.address,
+                  c.price,
+                  c.description,
+                  c.dateTime,
+                  c.listingUrl
+                )
               )
             )
             .void
@@ -58,10 +63,10 @@ private object ListingQueries {
   val codec: Codec[Listing] =
     (uuid.cimap[ListingId] ~ varchar.cimap[Title] ~ varchar
       .cimap[Address] ~ numeric.imap(CAD.apply)(_.amount) ~ varchar
-      .cimap[Description] ~ timestamp).imap {
-      case i ~ t ~ a ~ p ~ de ~ da => Listing(i, t, a, p, de, da)
+      .cimap[Description] ~ timestamp ~ varchar.cimap[ListingUrl]).imap {
+      case i ~ t ~ a ~ p ~ de ~ da ~ u => Listing(i, t, a, p, de, da, u)
     }(l =>
-      l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted
+      l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted ~ l.url
     )
 
   val selectAll: Query[Void, Listing] =
@@ -70,9 +75,17 @@ private object ListingQueries {
          ORDER BY date_posted DESC
        """.query(codec)
 
-  val insertListing: Command[Listing] =
+  // if the url is the same, updates the listing instead of creating a new one
+  def insertListings(n: Int): Command[List[Listing]] = {
+    val listingsCodec = codec.list(n)
     sql"""
-         INSERT INTO listings
-         VALUES ($codec)
+        INSERT INTO listings (uuid, title, address, price, description, date_posted, url)
+        VALUES ($listingsCodec)
+        ON CONFLICT (url) DO UPDATE
+            SET title       = EXCLUDED.title,
+                address     = EXCLUDED.address,
+                description = EXCLUDED.address,
+                url         = EXCLUDED.url
        """.command
+  }
 }

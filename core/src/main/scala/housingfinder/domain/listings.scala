@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 import eu.timepit.refined.api.Refined
-import eu.timepit.refined.string.ValidBigDecimal
+import eu.timepit.refined.string.{Url, ValidBigDecimal}
 import eu.timepit.refined.types.string.NonEmptyString
 import io.estatico.newtype.macros.newtype
 import squants.market.{CAD, Money}
@@ -14,6 +14,7 @@ object listings {
   @newtype case class Title(value: String)
   @newtype case class Address(value: String)
   @newtype case class Description(value: String)
+  @newtype case class ListingUrl(value: String)
 
   case class Listing(
       uuid: ListingId,
@@ -21,7 +22,8 @@ object listings {
       address: Address,
       price: Money,
       description: Description,
-      datePosted: LocalDateTime
+      datePosted: LocalDateTime,
+      url: ListingUrl
   )
 
   // create listing
@@ -29,21 +31,24 @@ object listings {
   @newtype case class AddressParam(value: NonEmptyString)
   @newtype case class PriceParam(value: String Refined ValidBigDecimal)
   @newtype case class DescriptionParam(value: NonEmptyString)
+  @newtype case class ListingUrlParam(value: String Refined Url)
 
   case class CreateListingParam(
-      titleParam: TitleParam,
-      addressParam: AddressParam,
-      priceParam: PriceParam,
-      descriptionParam: DescriptionParam,
-      dateParam: LocalDateTime
+      title: TitleParam,
+      address: AddressParam,
+      price: PriceParam,
+      description: DescriptionParam,
+      datePosted: LocalDateTime,
+      url: ListingUrlParam
   ) {
     def toDomain: CreateListing =
       CreateListing(
-        Title(titleParam.value.value),
-        Address(addressParam.value.value),
-        CAD(BigDecimal(priceParam.value.value)),
-        Description(descriptionParam.value.value),
-        dateParam
+        Title(title.value.value),
+        Address(address.value.value),
+        CAD(BigDecimal(price.value.value)),
+        Description(description.value.value),
+        datePosted,
+        ListingUrl(url.value.value)
       )
   }
 
@@ -52,6 +57,7 @@ object listings {
       address: Address,
       price: Money,
       description: Description,
-      dateTime: LocalDateTime
+      dateTime: LocalDateTime,
+      listingUrl: ListingUrl
   )
 }

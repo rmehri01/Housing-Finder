@@ -18,7 +18,7 @@ object decoder {
       req.asJsonDecode[A].attempt.flatMap {
         case Left(e) =>
           Option(e.getCause) match {
-            case Some(c) if c.getMessage.startsWith("Predicate") =>
+            case Some(c) if c.getMessage.contains("predicate failed") =>
               BadRequest(c.getMessage)
             case _ => UnprocessableEntity()
           }

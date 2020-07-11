@@ -9,7 +9,7 @@ import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken}
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.auto._
 import eu.timepit.refined.cats._
-import eu.timepit.refined.string.ValidBigDecimal
+import eu.timepit.refined.string.{Url, ValidBigDecimal}
 import eu.timepit.refined.types.string.NonEmptyString
 import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth._
@@ -68,7 +68,8 @@ object generators {
       p <- genMoney
       de <- cbStr[Description]
       da <- genLocalDateTime
-    } yield Listing(i, t, a, p, de, da)
+      u <- cbStr[ListingUrl]
+    } yield Listing(i, t, a, p, de, da, u)
 
   val genCreateListing: Gen[CreateListing] =
     for {
@@ -77,7 +78,8 @@ object generators {
       p <- genMoney
       de <- cbStr[Description]
       da <- genLocalDateTime
-    } yield CreateListing(t, a, p, de, da)
+      u <- cbStr[ListingUrl]
+    } yield CreateListing(t, a, p, de, da, u)
 
   val genAppStatus: Gen[AppStatus] =
     for {
@@ -96,7 +98,11 @@ object generators {
           .map(PriceParam.apply)
       de <- genStrRefinedUnsafe(DescriptionParam.apply)
       da <- genLocalDateTime
-    } yield CreateListingParam(t, a, p, de, da)
+      u <-
+        genNonEmptyString
+          .map(s => "http://" + s + ".com")
+          .map(ListingUrlParam.apply _ compose Refined.unsafeApply[String, Url])
+    } yield CreateListingParam(t, a, p, de, da, u)
 
   val genCreateUserParam: Gen[CreateUserParam] =
     for {

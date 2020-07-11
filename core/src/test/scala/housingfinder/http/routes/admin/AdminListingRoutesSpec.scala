@@ -41,6 +41,6 @@ protected class TestListings extends Listings[IO] {
 
   override def update: IO[Unit] = IO.unit
 
-  override def add(createListing: CreateListing): IO[Unit] =
+  override def addAll(createListings: List[CreateListing]): IO[Unit] =
     IO.unit
 }
