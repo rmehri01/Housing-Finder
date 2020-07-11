@@ -34,21 +34,21 @@ object listings {
   @newtype case class ListingUrlParam(value: String Refined Url)
 
   case class CreateListingParam(
-      titleParam: TitleParam,
-      addressParam: AddressParam,
-      priceParam: PriceParam,
-      descriptionParam: DescriptionParam,
-      dateParam: LocalDateTime,
-      listingUrlParam: ListingUrlParam
+      title: TitleParam,
+      address: AddressParam,
+      price: PriceParam,
+      description: DescriptionParam,
+      datePosted: LocalDateTime,
+      url: ListingUrlParam
   ) {
     def toDomain: CreateListing =
       CreateListing(
-        Title(titleParam.value.value),
-        Address(addressParam.value.value),
-        CAD(BigDecimal(priceParam.value.value)),
-        Description(descriptionParam.value.value),
-        dateParam,
-        ListingUrl(listingUrlParam.value.value)
+        Title(title.value.value),
+        Address(address.value.value),
+        CAD(BigDecimal(price.value.value)),
+        Description(description.value.value),
+        datePosted,
+        ListingUrl(url.value.value)
       )
   }
 
