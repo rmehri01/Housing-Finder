@@ -21,6 +21,7 @@ import io.estatico.newtype.ops._
 import org.scalacheck.{Arbitrary, Gen}
 import squants.market.{CAD, Money}
 
+// Generators that are used to create instances of arbitraries
 object generators {
 
   def cbUuid[A: Coercible[UUID, *]]: Gen[A] =

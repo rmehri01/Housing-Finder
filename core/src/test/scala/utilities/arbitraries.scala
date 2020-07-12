@@ -9,6 +9,7 @@ import housingfinder.domain.listings._
 import org.scalacheck.Arbitrary
 import utilities.generators._
 
+// Instances of Arbitrary that allow ScalaCheck to generate values to test against
 object arbitraries {
   implicit val arbListing: Arbitrary[Listing] =
     Arbitrary(genListing)

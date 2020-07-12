@@ -15,6 +15,7 @@ class GeneratorSpec extends PureTestSuite with ArbitraryInstances {
     spec("Token is made and decoded successfully") {
       val c = JwtClaim(Json.obj(("claim", j)).toString)
       for {
+        // encoding and decoding the claim should result in the same Json
         t <- mkToken(c, s)
         a = JwtAuth.hmac(s.value, algo)
         c <- decodeToken(t, a)
