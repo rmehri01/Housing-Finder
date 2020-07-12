@@ -2,6 +2,7 @@ package housingfinder.http.routes.admin
 
 import cats.data.NonEmptyList
 import cats.effect.IO
+import eu.timepit.refined.api.Refined
 import housingfinder.algebras.{Listings, Scraper}
 import housingfinder.domain.listings._
 import housingfinder.http.json._
@@ -14,10 +15,10 @@ import suite.AuthHttpTestSuite
 import utilities.arbitraries._
 
 class AdminListingRoutesSpec extends AuthHttpTestSuite {
-  forAll { (c: NonEmptyList[CreateListingParam]) =>
-    spec("POST create listing [OK]") {
+  forAll { (cs: NonEmptyList[CreateListingParam]) =>
+    spec("POST create listings [OK]") {
       POST(
-        c,
+        cs,
         uri"/listings"
       )
         .flatMap { req =>
@@ -25,6 +26,32 @@ class AdminListingRoutesSpec extends AuthHttpTestSuite {
             new AdminListingRoutes(new TestListings).routes(adminUserMiddleware)
           assertHttpStatus(routes, req)(Status.Created)
         }
+    }
+  }
+
+  forAll { (c: CreateListingParam, s: String) =>
+    spec("POST create listings, refined failed [ERROR]") {
+      POST(
+        List(c.copy(url = ListingUrlParam(Refined.unsafeApply(s)))),
+        uri"/listings"
+      ).flatMap { req =>
+        val routes =
+          new AdminListingRoutes(new TestListings).routes(adminUserMiddleware)
+        assertHttpStatus(routes, req)(Status.BadRequest)
+      }
+    }
+  }
+
+  forAll { (s: String) =>
+    spec("POST create listings, invalid listings [ERROR]") {
+      POST(
+        s,
+        uri"/listings"
+      ).flatMap { req =>
+        val routes =
+          new AdminListingRoutes(new TestListings).routes(adminUserMiddleware)
+        assertHttpStatus(routes, req)(Status.UnprocessableEntity)
+      }
     }
   }
 

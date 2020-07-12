@@ -4,6 +4,7 @@ import cats.effect.{Resource, Sync}
 import cats.implicits._
 import housingfinder.domain.auth.UserId
 import housingfinder.domain.listings._
+import housingfinder.domain.watched.AlreadyWatched
 import housingfinder.effects.BracketThrow
 import housingfinder.ext.skunkx._
 import skunk._
@@ -11,7 +12,7 @@ import skunk.codec.all._
 import skunk.implicits._
 
 trait Watched[F[_]] {
-  def getWatched(userId: UserId): F[List[Listing]]
+  def get(userId: UserId): F[List[Listing]]
   def add(userId: UserId, listingId: ListingId): F[Unit]
   def remove(userId: UserId, listingId: ListingId): F[Unit]
 }
@@ -28,7 +29,7 @@ final class LiveWatched[F[_]: BracketThrow: Sync] private (
 ) extends Watched[F] {
   import WatchedQueries._
 
-  override def getWatched(userId: UserId): F[List[Listing]] =
+  override def get(userId: UserId): F[List[Listing]] =
     sessionPool.use { session =>
       session.prepare(selectAll).use { q =>
         q.stream(userId, 1024).compile.toList
@@ -38,7 +39,13 @@ final class LiveWatched[F[_]: BracketThrow: Sync] private (
   override def add(userId: UserId, listingId: ListingId): F[Unit] =
     sessionPool.use { session =>
       session.prepare(insertWatched).use { cmd =>
-        cmd.execute(userId ~ listingId).void
+        cmd
+          .execute(userId ~ listingId)
+          .void
+          .handleErrorWith {
+            case SqlState.UniqueViolation(_) =>
+              AlreadyWatched(listingId).raiseError[F, Unit]
+          }
       }
     }
 
