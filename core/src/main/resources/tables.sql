@@ -26,5 +26,6 @@ CREATE TABLE watched
         ON UPDATE NO ACTION ON DELETE NO ACTION,
     CONSTRAINT listing_id_fkey FOREIGN KEY (listing_id)
         REFERENCES listings (uuid) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT pairs_unique UNIQUE (user_id, listing_id)
 );

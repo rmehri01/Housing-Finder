@@ -4,6 +4,7 @@ import cats.effect.{Resource, Sync}
 import cats.implicits._
 import housingfinder.domain.auth.UserId
 import housingfinder.domain.listings._
+import housingfinder.domain.watched.AlreadyWatched
 import housingfinder.effects.BracketThrow
 import housingfinder.ext.skunkx._
 import skunk._
@@ -38,7 +39,13 @@ final class LiveWatched[F[_]: BracketThrow: Sync] private (
   override def add(userId: UserId, listingId: ListingId): F[Unit] =
     sessionPool.use { session =>
       session.prepare(insertWatched).use { cmd =>
-        cmd.execute(userId ~ listingId).void
+        cmd
+          .execute(userId ~ listingId)
+          .void
+          .handleErrorWith {
+            case SqlState.UniqueViolation(_) =>
+              AlreadyWatched(listingId).raiseError[F, Unit]
+          }
       }
     }
 

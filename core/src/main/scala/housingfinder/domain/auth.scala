@@ -19,7 +19,6 @@ object auth {
   @newtype case class EncryptCipher(value: Cipher)
   @newtype case class DecryptCipher(value: Cipher)
 
-  // TODO: restrictions on username and password params
   // user registration
   @newtype case class UsernameParam(value: NonEmptyString) {
     def toDomain: Username = Username(value.value)
