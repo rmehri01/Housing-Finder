@@ -108,11 +108,14 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
             _ <- w.add(d, lId)
             y <- w.get(d)
 
+            // try to add a duplicate to the watch list
+            e <- w.add(d, lId).attempt
+
             // remove listing from watch list
             _ <- w.remove(d, lId)
             z <- w.get(d)
           } yield assert(
-            x.isEmpty && y.count(_.uuid == lId) === 1 && z.isEmpty
+            x.isEmpty && y.count(_.uuid == lId) === 1 && e.isLeft && z.isEmpty
           )
         }
     }

@@ -4,7 +4,6 @@ import java.util.UUID
 
 import cats.effect.{IO, Resource}
 import cats.implicits.{catsSyntaxEq => _, _}
-import cats.kernel.Eq
 import ciris.Secret
 import dev.profunktor.auth.jwt.{JwtAuth, JwtToken, _}
 import dev.profunktor.redis4cats._
@@ -52,23 +51,33 @@ class RedisTest extends ResourceSuite[RedisCommands[IO, String, String]] {
           u <- LiveUsersAuth.make[IO](redis)
 
           // try to find non-existent user
-          x <- u.findUser(JwtToken("invalid"))(jwtClaim)
+          n <- u.findUser(JwtToken("invalid"))(jwtClaim)
 
           // create user with un1 so it should be found
           j <- a.newUser(un1, pw)
           e <- jwtDecode[IO](j, userJwtAuth.value).attempt
 
-          // login and logout successfully so later un2 should not be found
+          // login un2
           k <- a.login(un2, pw)
           f <- jwtDecode[IO](k, userJwtAuth.value).attempt
+
+          // try to create un2 again
+          r <- a.newUser(un2, pw).attempt
+
+          // login with existing token
+          l <- a.login(un2, pw)
+          g <- jwtDecode[IO](l, userJwtAuth.value).attempt
+
+          // logout successfully so later un2 should not be found
           _ <- a.logout(k, un2)
 
           y <- u.findUser(k)(jwtClaim)
           w <- u.findUser(j)(jwtClaim)
         } yield assert(
-          x.isEmpty && e.isRight && f.isRight && y.isEmpty && w.fold(false)(
-            _.value.name == un1
-          )
+          n.isEmpty && e.isRight && r.isLeft && f.isRight && g.isRight && y.isEmpty &&
+            w.fold(false)(
+              _.value.name == un1
+            )
         )
       }
     }
@@ -79,8 +88,7 @@ class RedisTest extends ResourceSuite[RedisCommands[IO, String, String]] {
 protected class TestUsers(un: Username) extends Users[IO] {
   // only returns the user if username is equivalent to un
   def find(username: Username, password: Password): IO[Option[User]] =
-    Eq[String]
-      .eqv(username.value, un.value)
+    (username == un)
       .guard[Option]
       .as(User(UserId(UUID.randomUUID), un))
       .pure[IO]
