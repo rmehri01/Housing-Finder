@@ -6,7 +6,7 @@ import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.AppStatus
 import housingfinder.domain.listings._
-import org.scalacheck.{Arbitrary, Gen}
+import org.scalacheck.Arbitrary
 import utilities.generators._
 
 object arbitraries {
@@ -25,10 +25,13 @@ object arbitraries {
   implicit val arbTitle: Arbitrary[Title] =
     Arbitrary(cbStr[Title])
 
-  implicit val arbNonEmptyListings: Arbitrary[NonEmptyList[CreateListing]] =
-    Arbitrary(
-      Gen.nonEmptyListOf(genCreateListing).map(NonEmptyList.fromListUnsafe)
-    )
+  implicit val arbNonEmptyCreateListings
+      : Arbitrary[NonEmptyList[CreateListing]] =
+    Arbitrary(genNonEmptyList(genCreateListing))
+
+  implicit val arbNonEmptyCreateListingParams
+      : Arbitrary[NonEmptyList[CreateListingParam]] =
+    Arbitrary(genNonEmptyList(genCreateListingParam))
 
   implicit val arbJwtToken: Arbitrary[JwtToken] =
     Arbitrary(genJwtToken)

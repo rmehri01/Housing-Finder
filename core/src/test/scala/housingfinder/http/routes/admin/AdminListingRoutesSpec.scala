@@ -1,5 +1,6 @@
 package housingfinder.http.routes.admin
 
+import cats.data.NonEmptyList
 import cats.effect.IO
 import housingfinder.algebras.Listings
 import housingfinder.domain.listings._
@@ -12,7 +13,7 @@ import suite.AuthHttpTestSuite
 import utilities.arbitraries._
 
 class AdminListingRoutesSpec extends AuthHttpTestSuite {
-  forAll { (c: CreateListingParam) =>
+  forAll { (c: NonEmptyList[CreateListingParam]) =>
     spec("POST create listing [OK]") {
       POST(
         c,
