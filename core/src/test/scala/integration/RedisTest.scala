@@ -50,12 +50,19 @@ class RedisTest extends ResourceSuite[RedisCommands[IO, String, String]] {
           t <- LiveTokens.make[IO](tokenConfig, tokenExp)
           a <- LiveAuth.make(tokenExp, t, new TestUsers(un2), redis)
           u <- LiveUsersAuth.make[IO](redis)
+
+          // try to find non-existent user
           x <- u.findUser(JwtToken("invalid"))(jwtClaim)
+
+          // create user with un1 so it should be found
           j <- a.newUser(un1, pw)
           e <- jwtDecode[IO](j, userJwtAuth.value).attempt
+
+          // login and logout successfully so later un2 should not be found
           k <- a.login(un2, pw)
           f <- jwtDecode[IO](k, userJwtAuth.value).attempt
           _ <- a.logout(k, un2)
+
           y <- u.findUser(k)(jwtClaim)
           w <- u.findUser(j)(jwtClaim)
         } yield assert(
@@ -70,6 +77,7 @@ class RedisTest extends ResourceSuite[RedisCommands[IO, String, String]] {
 }
 
 protected class TestUsers(un: Username) extends Users[IO] {
+  // only returns the user if username is equivalent to un
   def find(username: Username, password: Password): IO[Option[User]] =
     Eq[String]
       .eqv(username.value, un.value)

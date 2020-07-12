@@ -46,8 +46,6 @@ class ListingRoutesSpec extends HttpTestSuite {
 protected class TestListings extends Listings[IO] {
   override def get: IO[List[Listing]] = IO.pure(List.empty)
 
-  override def update: IO[Unit] = IO.unit
-
   override def addAll(createListings: List[CreateListing]): IO[Unit] =
     IO.unit
 }

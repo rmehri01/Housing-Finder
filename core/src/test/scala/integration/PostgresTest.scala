@@ -34,14 +34,17 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
         spec("Listings") {
           LiveListings.make(pool).flatMap { l =>
             for {
+              // single listing is added successfully
               x <- l.get
               _ <- l.addAll(List(c))
               y <- l.get
 
+              // the added listing is updated but id stays the same
               yId = y.head.uuid
               _ <- l.addAll(List(c.copy(title = t)))
               z <- l.get
 
+              // multiple listings are added successfully
               _ <- l.addAll(cs.toList)
               a <- l.get
             } yield assert(
@@ -65,8 +68,14 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
           c <- LiveCrypto.make[IO](salt)
           u <- LiveUsers.make[IO](pool, c)
           d <- u.create(username, password)
+
+          // get user by correct username and password
           x <- u.find(username, password)
+
+          // incorrect password should fail
           y <- u.find(username, "foo".coerce[Password])
+
+          // cannot make a duplicate user
           z <- u.create(username, password).attempt
         } yield assert(
           x.count(_.id == d) === 1 && y.isEmpty && z.isLeft
@@ -74,7 +83,6 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
       }
     }
 
-    // TODO: a bit awkward without being able to get specific listing
     forAll(MaxTests) {
       (
           c: CreateListing,
@@ -83,19 +91,24 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
       ) =>
         spec("Watched") {
           for {
+            // add a listing to be used later
             l <- LiveListings.make[IO](pool)
             _ <- l.addAll(List(c))
             l <- l.get
             lId = l.head.uuid
 
+            // create a user
             c <- LiveCrypto.make[IO](salt)
             u <- LiveUsers.make[IO](pool, c)
             d <- u.create(un, pw)
 
+            // add a single listing to the watch list
             w <- LiveWatched.make[IO](pool)
             x <- w.getWatched(d)
             _ <- w.add(d, lId)
             y <- w.getWatched(d)
+
+            // remove listing from watch list
             _ <- w.remove(d, lId)
             z <- w.getWatched(d)
           } yield assert(
