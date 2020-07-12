@@ -20,16 +20,13 @@ final class AdminListingRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
   private[admin] val prefixPath = "/listings"
 
   private val httpRoutes: AuthedRoutes[AdminUser, F] = AuthedRoutes.of {
+
     case ar @ POST -> Root as _ =>
       ar.req.decodeR[List[CreateListingParam]] { cs =>
         listings.addAll(cs.map(_.toDomain)) *>
           Created()
       }
 
-    // TODO: recoverWith
-    case PUT -> Root as _ =>
-      listings.update *>
-        Ok()
   }
 
   def routes(authMiddleware: AuthMiddleware[F, AdminUser]): HttpRoutes[F] =

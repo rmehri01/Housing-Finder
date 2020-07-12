@@ -16,6 +16,7 @@ final class AdminUpdateRoutes[F[_]: Defer: Monad](
 
   // TODO: error handling
   private val httpRoutes: AuthedRoutes[AdminUser, F] = AuthedRoutes.of {
+
     case PUT -> Root as _ =>
       program.scrapeAndUpdate
         .flatMap(Ok(_))

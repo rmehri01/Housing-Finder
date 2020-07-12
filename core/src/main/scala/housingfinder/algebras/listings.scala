@@ -13,7 +13,6 @@ import squants.market._
 trait Listings[F[_]] {
   // TODO: some way to filter out listings by desired properties
   def get: F[List[Listing]]
-  def update: F[Unit]
   def addAll(createListings: List[CreateListing]): F[Unit]
 }
 
@@ -29,9 +28,6 @@ final class LiveListings[F[_]: Sync] private (
 
   override def get: F[List[Listing]] =
     sessionPool.use(_.execute(selectAll))
-
-  // TODO: scrape and for each, add listing
-  override def update: F[Unit] = ???
 
   override def addAll(createListings: List[CreateListing]): F[Unit] =
     sessionPool.use { session =>
