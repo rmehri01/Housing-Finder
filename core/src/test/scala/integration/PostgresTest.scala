@@ -104,13 +104,13 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
 
             // add a single listing to the watch list
             w <- LiveWatched.make[IO](pool)
-            x <- w.getWatched(d)
+            x <- w.get(d)
             _ <- w.add(d, lId)
-            y <- w.getWatched(d)
+            y <- w.get(d)
 
             // remove listing from watch list
             _ <- w.remove(d, lId)
-            z <- w.getWatched(d)
+            z <- w.get(d)
           } yield assert(
             x.isEmpty && y.count(_.uuid == lId) === 1 && z.isEmpty
           )

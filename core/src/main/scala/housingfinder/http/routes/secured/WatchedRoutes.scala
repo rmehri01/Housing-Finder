@@ -21,9 +21,8 @@ final class WatchedRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
 
   private val httpRoutes: AuthedRoutes[CommonUser, F] = AuthedRoutes.of {
     case GET -> Root as user =>
-      Ok(watched.getWatched(user.value.id))
+      Ok(watched.get(user.value.id))
 
-    // TODO: needs to be tested
     case POST -> Root / UUIDVar(uuid) as user =>
       watched.add(user.value.id, ListingId(uuid))
         .flatMap(Created(_))

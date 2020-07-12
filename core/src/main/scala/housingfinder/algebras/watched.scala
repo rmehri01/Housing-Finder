@@ -12,7 +12,7 @@ import skunk.codec.all._
 import skunk.implicits._
 
 trait Watched[F[_]] {
-  def getWatched(userId: UserId): F[List[Listing]]
+  def get(userId: UserId): F[List[Listing]]
   def add(userId: UserId, listingId: ListingId): F[Unit]
   def remove(userId: UserId, listingId: ListingId): F[Unit]
 }
@@ -29,7 +29,7 @@ final class LiveWatched[F[_]: BracketThrow: Sync] private (
 ) extends Watched[F] {
   import WatchedQueries._
 
-  override def getWatched(userId: UserId): F[List[Listing]] =
+  override def get(userId: UserId): F[List[Listing]] =
     sessionPool.use { session =>
       session.prepare(selectAll).use { q =>
         q.stream(userId, 1024).compile.toList
