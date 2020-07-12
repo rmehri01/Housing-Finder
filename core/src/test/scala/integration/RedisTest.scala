@@ -60,7 +60,7 @@ class RedisTest extends ResourceSuite[RedisCommands[IO, String, String]] {
           w <- u.findUser(j)(jwtClaim)
         } yield assert(
           x.isEmpty && e.isRight && f.isRight && y.isEmpty && w.fold(false)(
-            _.value.name.value == un1.value
+            _.value.name == un1
           )
         )
       }

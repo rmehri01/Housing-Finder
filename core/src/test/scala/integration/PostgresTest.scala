@@ -46,7 +46,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
               a <- l.get
             } yield assert(
               x.isEmpty &&
-                y.count(_.title.value === c.title.value) === 1 &&
+                y.count(_.title == c.title) === 1 &&
                 z.count(listing =>
                   listing.uuid == yId && listing.title == t
                 ) === 1 &&
@@ -69,7 +69,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
           y <- u.find(username, "foo".coerce[Password])
           z <- u.create(username, password).attempt
         } yield assert(
-          x.count(_.id.value === d.value) === 1 && y.isEmpty && z.isLeft
+          x.count(_.id == d) === 1 && y.isEmpty && z.isLeft
         )
       }
     }
@@ -99,7 +99,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
             _ <- w.remove(d, lId)
             z <- w.getWatched(d)
           } yield assert(
-            x.isEmpty && y.count(_.uuid.value === lId.value) === 1 && z.isEmpty
+            x.isEmpty && y.count(_.uuid == lId) === 1 && z.isEmpty
           )
         }
     }

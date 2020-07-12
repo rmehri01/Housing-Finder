@@ -3,6 +3,7 @@ package utilities
 import java.time.{LocalDateTime, ZoneOffset}
 import java.util.UUID
 
+import cats.data.NonEmptyList
 import cats.implicits._
 import ciris.Secret
 import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken}
@@ -59,6 +60,9 @@ object generators {
 
   val genJwtToken: Gen[JwtToken] =
     genNonEmptyString.map(JwtToken)
+
+  def genNonEmptyList[A](gen: Gen[A]): Gen[NonEmptyList[A]] =
+    Gen.nonEmptyListOf(gen).map(NonEmptyList.fromListUnsafe)
 
   val genListing: Gen[Listing] =
     for {
