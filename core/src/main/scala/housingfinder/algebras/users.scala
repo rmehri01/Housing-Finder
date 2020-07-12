@@ -33,7 +33,7 @@ final class LiveUsers[F[_]: BracketThrow: GenUUID] private (
     sessionPool.use { session =>
       session.prepare(selectUser).use { q =>
         q.option(username).map {
-          case Some(u ~ p) if p.value == crypto.encrypt(password).value =>
+          case Some(u ~ p) if p == crypto.encrypt(password) =>
             u.some
           case _ => none[User]
         }

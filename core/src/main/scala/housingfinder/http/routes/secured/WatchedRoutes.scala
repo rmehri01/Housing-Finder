@@ -24,7 +24,8 @@ final class WatchedRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
       Ok(watched.get(user.value.id))
 
     case POST -> Root / UUIDVar(uuid) as user =>
-      watched.add(user.value.id, ListingId(uuid))
+      watched
+        .add(user.value.id, ListingId(uuid))
         .flatMap(Created(_))
         .recoverWith {
           case AlreadyWatched(id) => Conflict(id)
