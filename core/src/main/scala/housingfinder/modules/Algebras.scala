@@ -14,13 +14,15 @@ object Algebras {
   ): F[Algebras[F]] =
     for {
       listings <- LiveListings.make[F](sessionPool)
+      scraper <- LiveScraper.make[F]
       watched <- LiveWatched.make[F](sessionPool)
       health <- LiveHealthCheck.make[F](sessionPool, redis)
-    } yield new Algebras[F](listings, watched, health)
+    } yield new Algebras[F](listings, scraper, watched, health)
 }
 
 final class Algebras[F[_]] private (
     val listings: Listings[F],
+    val scraper: Scraper[F],
     val watched: Watched[F],
     val healthCheck: HealthCheck[F]
 )

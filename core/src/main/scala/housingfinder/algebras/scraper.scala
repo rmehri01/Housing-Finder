@@ -6,7 +6,6 @@ import cats.effect.Sync
 import cats.implicits._
 import cats.{Monad, Parallel}
 import housingfinder.domain.listings._
-import housingfinder.http.clients.KijijiClient
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._
