@@ -15,6 +15,7 @@ object Dependencies {
     val skunk = "0.0.13"
     val ciris = "1.1.1"
     val redis4cats = "0.10.1"
+    val scalaScraper = "2.2.0"
 
     // Test
     val scalaTest = "3.2.0"
@@ -48,7 +49,7 @@ object Dependencies {
     lazy val catsEffect = "org.typelevel" %% "cats-effect" % Versions.catsEffect
     lazy val newtype = "io.estatico" %% "newtype" % Versions.newtype
     lazy val squants = "org.typelevel" %% "squants" % Versions.squants
-    val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % Versions.log4cats
+    lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % Versions.log4cats
 
     lazy val refinedCats = refined("refined-cats")
     lazy val refinedCore = refined("refined")
@@ -75,6 +76,8 @@ object Dependencies {
 
     lazy val redis4catsEffects = redis4cats("redis4cats-effects")
     lazy val redis4catsLog4cats = redis4cats("redis4cats-log4cats")
+
+    lazy val scalaScraper = "net.ruippeixotog" %% "scala-scraper" % Versions.scalaScraper
 
     // Test
     lazy val scalaTest = "org.scalatest" %% "scalatest" % Versions.scalaTest

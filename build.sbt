@@ -35,6 +35,7 @@ lazy val commonSettings = Seq(
     Libraries.cirisRefined,
     Libraries.redis4catsEffects,
     Libraries.redis4catsLog4cats,
+    Libraries.scalaScraper,
     Libraries.scalaTest % Test,
     Libraries.scalaCheck % Test,
     Libraries.scalaTestPlus % Test,
