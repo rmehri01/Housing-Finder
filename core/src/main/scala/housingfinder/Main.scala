@@ -19,7 +19,9 @@ object Main extends IOApp {
           for {
             security <- Security.make[IO](cfg, res.psql, res.redis)
             algebras <- Algebras.make[IO](res.redis, res.psql)
-            api <- HttpApi.make[IO](algebras, security)
+            clients <- HttpClients.make(res.client)
+            programs <- Programs.make(algebras, clients)
+            api <- HttpApi.make[IO](algebras, programs, security)
             _ <-
               BlazeServerBuilder[IO](ExecutionContext.global)
                 .bindHttp(

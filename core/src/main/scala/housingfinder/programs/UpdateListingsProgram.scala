@@ -18,9 +18,9 @@ final class UpdateListingsProgram[F[_]: Monad: Parallel](
   private def makePageUrl(pageNum: Int) =
     BaseUrl + s"/b-apartments-condos/ubc-university-british-columbia/ubc/page-$pageNum/k0c37l1700291?radius=12.0&address=University+Endowment+Lands%2C+BC&ll=49.273128,-123.248764"
 
-  private def scrapeSingleListing(url: String): F[CreateListing] =
-    kijiji.getHtml(url).flatMap { html =>
-      scraper.createListingFromPage(html, url)
+  private def scrapeSingleListing(relUrl: String): F[CreateListing] =
+    kijiji.getHtml(BaseUrl + relUrl).flatMap { html =>
+      scraper.createListingFromPage(html, BaseUrl + relUrl)
     }
 
   private def scrapeSinglePage(url: String): F[List[CreateListing]] =
@@ -30,8 +30,9 @@ final class UpdateListingsProgram[F[_]: Monad: Parallel](
       listings <- urls.parTraverse(scrapeSingleListing)
     } yield listings
 
+  // TODO: first
   def scrapeAndUpdate: F[Unit] =
-    (1 to 3)
+    (2 to 3)
       .map(makePageUrl)
       .toList
       .parFlatTraverse(scrapeSinglePage)

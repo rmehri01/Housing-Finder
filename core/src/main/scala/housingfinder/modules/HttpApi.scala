@@ -18,11 +18,13 @@ import scala.concurrent.duration._
 object HttpApi {
   def make[F[_]: Concurrent: Timer](
       algebras: Algebras[F],
+      programs: Programs[F],
       security: Security[F]
   ): F[HttpApi[F]] =
     Sync[F].delay(
       new HttpApi[F](
         algebras,
+        programs,
         security
       )
     )
@@ -30,6 +32,7 @@ object HttpApi {
 
 final class HttpApi[F[_]: Concurrent: Timer] private (
     algebras: Algebras[F],
+    programs: Programs[F],
     security: Security[F]
 ) {
   private val adminMiddleware =
@@ -60,13 +63,16 @@ final class HttpApi[F[_]: Concurrent: Timer] private (
   // Admin routes
   private val adminListingRoutes =
     new AdminListingRoutes[F](algebras.listings).routes(adminMiddleware)
+  private val adminUpdateRoutes =
+    new AdminUpdateRoutes[F](programs.updateListings).routes(adminMiddleware)
 
   // Combining all the http routes
   private val openRoutes: HttpRoutes[F] =
     healthRoutes <+> listingRoutes <+> loginRoutes <+> userRoutes <+>
       logoutRoutes <+> watchedRoutes
 
-  private val adminRoutes: HttpRoutes[F] = adminListingRoutes
+  private val adminRoutes: HttpRoutes[F] =
+    adminListingRoutes <+> adminUpdateRoutes
 
   private val routes: HttpRoutes[F] = Router(
     version.v1 -> openRoutes,

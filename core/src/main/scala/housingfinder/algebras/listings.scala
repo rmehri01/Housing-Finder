@@ -31,26 +31,25 @@ final class LiveListings[F[_]: Sync] private (
 
   override def addAll(createListings: List[CreateListing]): F[Unit] =
     sessionPool.use { session =>
-      val len = createListings.length
-
-      session.prepare(insertListings(len)).use { cmd =>
-        GenUUID[F].make[ListingId].replicateA(len).flatMap { ids =>
-          cmd
-            .execute(
-              (ids, createListings).mapN((id, c) =>
-                Listing(
-                  id,
-                  c.title,
-                  c.address,
-                  c.price,
-                  c.description,
-                  c.dateTime,
-                  c.listingUrl
-                )
+      GenUUID[F].make[ListingId].replicateA(createListings.length).flatMap {
+        ids =>
+          val ls = ids.zip(createListings).map {
+            case (id, c) =>
+              Listing(
+                id,
+                c.title,
+                c.address,
+                c.price,
+                c.description,
+                c.dateTime,
+                c.listingUrl
               )
-            )
-            .void
-        }
+          }
+
+          session.prepare(insertListings(ls)).use { cmd =>
+            cmd.execute(ls).void
+          }
+
       }
     }
 }
@@ -72,11 +71,11 @@ private object ListingQueries {
        """.query(codec)
 
   // if the url is the same, updates the listing instead of creating a new one
-  def insertListings(n: Int): Command[List[Listing]] = {
-    val listingsCodec = codec.list(n)
+  def insertListings(ls: List[Listing]): Command[ls.type] = {
+    val listingsCodec = codec.values.list(ls)
     sql"""
         INSERT INTO listings (uuid, title, address, price, description, date_posted, url)
-        VALUES ($listingsCodec)
+        VALUES $listingsCodec
         ON CONFLICT (url) DO UPDATE
             SET title       = EXCLUDED.title,
                 address     = EXCLUDED.address,

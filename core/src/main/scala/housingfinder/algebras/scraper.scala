@@ -37,15 +37,17 @@ final class LiveScraper[F[_]: Monad: Parallel] extends Scraper[F] {
     val address = doc >> text(".address-3617944557")
     val price = doc >?> attr("content")(".currentPrice-2842943473 span")
     val description = doc >> text(".descriptionContainer-3544745383 div")
-    val datePosted = doc >> attr("dateTime")("time")
+    val datePosted = doc >?> attr("dateTime")("time")
 
+    // TODO: proper error handling
     CreateListing(
       Title(title),
       Address(address),
-      CAD(price.getOrElse("0").toDouble),
+      CAD(price.getOrElse("1").toDouble),
       Description(description),
-      LocalDateTime.parse(datePosted.init),
-      // TODO: not the best, kind of coupled with http
+      LocalDateTime.parse(
+        datePosted.map(_.init).getOrElse(LocalDateTime.now().toString)
+      ),
       ListingUrl(url)
     ).pure[F]
   }
