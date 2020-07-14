@@ -49,7 +49,7 @@ final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
       DateTimeFormatter.ofPattern("MMMM d, yyyy h:mm a")
     )
 
-    // TODO: proper error handling
+    // TODO: proper error handling, probably using validated
     CreateListing(
       Title(title),
       Address(address),

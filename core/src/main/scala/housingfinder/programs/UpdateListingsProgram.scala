@@ -30,9 +30,9 @@ final class UpdateListingsProgram[F[_]: Monad: Parallel](
       listings <- urls.parTraverse(scrapeSingleListing)
     } yield listings
 
-  // TODO: first
+  // scrapes the first three pages
   def scrapeAndUpdate: F[Unit] =
-    (2 to 3)
+    (1 to 3)
       .map(makePageUrl)
       .toList
       .parFlatTraverse(scrapeSinglePage)
