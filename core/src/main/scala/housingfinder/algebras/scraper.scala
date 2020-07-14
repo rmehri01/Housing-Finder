@@ -1,11 +1,13 @@
 package housingfinder.algebras
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+import cats.Parallel
 import cats.effect.Sync
 import cats.implicits._
-import cats.{Monad, Parallel}
 import housingfinder.domain.listings._
+import housingfinder.effects.MonadThrow
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._
@@ -24,7 +26,7 @@ object LiveScraper {
 }
 
 // TODO: add refined types
-final class LiveScraper[F[_]: Monad: Parallel] extends Scraper[F] {
+final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
   private val browser = JsoupBrowser()
 
   def getUrlsOnPage(html: String): F[List[String]] =
@@ -37,7 +39,15 @@ final class LiveScraper[F[_]: Monad: Parallel] extends Scraper[F] {
     val address = doc >> text(".address-3617944557")
     val price = doc >?> attr("content")(".currentPrice-2842943473 span")
     val description = doc >> text(".descriptionContainer-3544745383 div")
-    val datePosted = doc >?> attr("dateTime")("time")
+    // on the site this is inconsistent, it is either in a time tag or just a span
+    val dateStr =
+      (doc >?> attr("title")("time"))
+        .getOrElse(doc >> attr("title")(".datePosted-383942873 span"))
+
+    val datePosted = LocalDateTime.parse(
+      dateStr,
+      DateTimeFormatter.ofPattern("MMMM d, yyyy h:mm a")
+    )
 
     // TODO: proper error handling
     CreateListing(
@@ -45,9 +55,7 @@ final class LiveScraper[F[_]: Monad: Parallel] extends Scraper[F] {
       Address(address),
       CAD(price.getOrElse("1").toDouble),
       Description(description),
-      LocalDateTime.parse(
-        datePosted.map(_.init).getOrElse(LocalDateTime.now().toString)
-      ),
+      datePosted,
       ListingUrl(url)
     ).pure[F]
   }

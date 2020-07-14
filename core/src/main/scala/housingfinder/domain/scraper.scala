@@ -4,4 +4,5 @@ import scala.util.control.NoStackTrace
 
 object scraper {
   case class KijijiConnectionError(cause: String) extends NoStackTrace
+  case object CssSelectionError extends NoStackTrace
 }
