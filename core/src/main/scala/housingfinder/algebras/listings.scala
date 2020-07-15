@@ -79,7 +79,9 @@ private object ListingQueries {
         ON CONFLICT (url) DO UPDATE
             SET title       = EXCLUDED.title,
                 address     = EXCLUDED.address,
+                price       = EXCLUDED.price,
                 description = EXCLUDED.address,
+                date_posted = EXCLUDED.date_posted,
                 url         = EXCLUDED.url
        """.command
   }

@@ -99,9 +99,7 @@ object generators {
     for {
       t <- genStrRefinedUnsafe(TitleParam.apply)
       a <- genStrRefinedUnsafe(AddressParam.apply)
-      p <- genOptionMoney.map(o =>
-        PriceParam(o.map(_.value.toString).map(Refined.unsafeApply))
-      )
+      p <- genOptionMoney
       de <- genStrRefinedUnsafe(DescriptionParam.apply)
       da <- genLocalDateTime
       u <-
