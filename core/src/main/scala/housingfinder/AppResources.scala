@@ -16,7 +16,7 @@ import skunk._
 
 import scala.concurrent.ExecutionContext
 
-final case class AppResources[F[_]](
+final case class AppResources[F[_]] private (
     client: Client[F],
     psql: Resource[F, Session[F]],
     redis: RedisCommands[F, String, String]

@@ -50,8 +50,8 @@ object load {
         PasswordSalt(salt),
         TokenExpiration(30.minutes),
         HttpClientConfig(
-          connectTimeout = 2.seconds,
-          requestTimeout = 2.seconds
+          connectTimeout = 10.minutes,
+          requestTimeout = 10.minutes
         ),
         PostgreSQLConfig(
           host = "localhost",
