@@ -20,7 +20,7 @@ object listings {
       uuid: ListingId,
       title: Title,
       address: Address,
-      price: Money,
+      price: Option[Money],
       description: Description,
       datePosted: LocalDateTime,
       url: ListingUrl
@@ -29,7 +29,7 @@ object listings {
   // create listing
   @newtype case class TitleParam(value: NonEmptyString)
   @newtype case class AddressParam(value: NonEmptyString)
-  @newtype case class PriceParam(value: String Refined ValidBigDecimal)
+  @newtype case class PriceParam(value: Option[String Refined ValidBigDecimal])
   @newtype case class DescriptionParam(value: NonEmptyString)
   @newtype case class ListingUrlParam(value: String Refined Url)
 
@@ -45,7 +45,7 @@ object listings {
       CreateListing(
         Title(title.value.value),
         Address(address.value.value),
-        CAD(BigDecimal(price.value.value)),
+        price.value.map(s => CAD(BigDecimal(s.value))),
         Description(description.value.value),
         datePosted,
         ListingUrl(url.value.value)
@@ -55,7 +55,7 @@ object listings {
   case class CreateListing(
       title: Title,
       address: Address,
-      price: Money,
+      price: Option[Money],
       description: Description,
       dateTime: LocalDateTime,
       listingUrl: ListingUrl

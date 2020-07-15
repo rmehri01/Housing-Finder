@@ -43,6 +43,7 @@ final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
 
     val title = doc >> text(".title-2323565163")
     val address = doc >> text(".address-3617944557")
+    // optional since the listing may have another price option like "Please Contact"
     val price = doc >?> attr("content")(".currentPrice-2842943473 span")
     val description = doc >> text(".descriptionContainer-3544745383 div")
     // on the site this is inconsistent, it is either in a time tag or just a span
@@ -59,7 +60,7 @@ final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
     CreateListing(
       Title(title),
       Address(address),
-      CAD(price.getOrElse("1").toDouble),
+      price.map(s => CAD(s.toDouble)),
       Description(description),
       datePosted,
       url

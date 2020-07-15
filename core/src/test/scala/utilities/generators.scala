@@ -10,7 +10,7 @@ import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken}
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.auto._
 import eu.timepit.refined.cats._
-import eu.timepit.refined.string.{Url, ValidBigDecimal}
+import eu.timepit.refined.string.Url
 import eu.timepit.refined.types.string.NonEmptyString
 import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth._
@@ -43,6 +43,9 @@ object generators {
   val genMoney: Gen[Money] =
     Gen.posNum[Double].map(n => CAD(BigDecimal(n)))
 
+  val genOptionMoney: Gen[Option[Money]] =
+    Gen.option(genMoney)
+
   val genLocalDateTime: Gen[LocalDateTime] = {
     val utc = ZoneOffset.UTC
 
@@ -70,7 +73,7 @@ object generators {
       i <- cbUuid[ListingId]
       t <- cbStr[Title]
       a <- cbStr[Address]
-      p <- genMoney
+      p <- genOptionMoney
       de <- cbStr[Description]
       da <- genLocalDateTime
       u <- cbStr[ListingUrl]
@@ -80,7 +83,7 @@ object generators {
     for {
       t <- cbStr[Title]
       a <- cbStr[Address]
-      p <- genMoney
+      p <- genOptionMoney
       de <- cbStr[Description]
       da <- genLocalDateTime
       u <- cbStr[ListingUrl]
@@ -96,11 +99,9 @@ object generators {
     for {
       t <- genStrRefinedUnsafe(TitleParam.apply)
       a <- genStrRefinedUnsafe(AddressParam.apply)
-      p <-
-        Gen
-          .posNum[Double]
-          .map(l => Refined.unsafeApply[String, ValidBigDecimal](l.toString))
-          .map(PriceParam.apply)
+      p <- genOptionMoney.map(o =>
+        PriceParam(o.map(_.value.toString).map(Refined.unsafeApply))
+      )
       de <- genStrRefinedUnsafe(DescriptionParam.apply)
       da <- genLocalDateTime
       u <-

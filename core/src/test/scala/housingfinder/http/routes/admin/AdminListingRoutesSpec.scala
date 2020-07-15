@@ -15,7 +15,6 @@ import org.http4s.Method._
 import org.http4s._
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
-import squants.market.CAD
 import suite.AuthHttpTestSuite
 import utilities.arbitraries._
 
@@ -118,7 +117,7 @@ protected class TestScraper extends Scraper[IO] {
       CreateListing(
         Title(""),
         Address(""),
-        CAD(0),
+        None,
         Description(""),
         LocalDateTime.parse("2019-01-21T05:47:20.949"),
         ListingUrl("")
