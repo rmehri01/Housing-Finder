@@ -26,7 +26,6 @@ object LiveScraper {
     }
 }
 
-// TODO: add refined types
 final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
   private val browser = JsoupBrowser()
 
