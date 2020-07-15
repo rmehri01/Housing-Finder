@@ -9,5 +9,6 @@ object scraper {
   @newtype case class KijijiUrl(value: String)
   @newtype case class RelListingUrl(value: String)
 
-  case class KijijiConnectionError(cause: String) extends NoStackTrace
+  @newtype case class ErrorMessage(value: String)
+  case class KijijiConnectionError(cause: ErrorMessage) extends NoStackTrace
 }

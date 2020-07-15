@@ -5,6 +5,7 @@ import cats.implicits._
 import housingfinder.domain.scraper.KijijiConnectionError
 import housingfinder.effects.MonadThrow
 import housingfinder.http.auth.users.AdminUser
+import housingfinder.http.json._
 import housingfinder.programs.UpdateListingsProgram
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}

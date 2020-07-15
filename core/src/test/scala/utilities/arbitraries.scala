@@ -6,6 +6,7 @@ import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth._
 import housingfinder.domain.healthcheck.AppStatus
 import housingfinder.domain.listings._
+import housingfinder.domain.scraper.ErrorMessage
 import org.scalacheck.Arbitrary
 import utilities.generators._
 
@@ -33,6 +34,9 @@ object arbitraries {
   implicit val arbNonEmptyCreateListingParams
       : Arbitrary[NonEmptyList[CreateListingParam]] =
     Arbitrary(genNonEmptyList(genCreateListingParam))
+
+  implicit val arbErrorMessage: Arbitrary[ErrorMessage] =
+    Arbitrary(cbStr[ErrorMessage])
 
   implicit val arbJwtToken: Arbitrary[JwtToken] =
     Arbitrary(genJwtToken)

@@ -24,7 +24,7 @@ final class LiveKijijiClient[F[_]: JsonDecoder: BracketThrow: Concurrent](
           r.as[Html]
         else
           KijijiConnectionError(
-            Option(r.status.reason).getOrElse("unknown")
+            ErrorMessage(Option(r.status.reason).getOrElse("unknown"))
           ).raiseError[F, Html]
       }
     }
