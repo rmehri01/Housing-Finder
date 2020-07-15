@@ -3,7 +3,8 @@ package housingfinder.programs
 import cats.implicits._
 import cats.{Monad, Parallel}
 import housingfinder.algebras.{Listings, Scraper}
-import housingfinder.domain.listings.CreateListing
+import housingfinder.domain.listings.{CreateListing, ListingUrl}
+import housingfinder.domain.scraper.KijijiUrl
 import housingfinder.http.clients.KijijiClient
 
 final class UpdateListingsProgram[F[_]: Monad: Parallel](
@@ -15,19 +16,26 @@ final class UpdateListingsProgram[F[_]: Monad: Parallel](
   private val BaseUrl =
     "https://www.kijiji.ca"
 
-  private def makePageUrl(pageNum: Int) =
-    BaseUrl + s"/b-apartments-condos/ubc-university-british-columbia/ubc/page-$pageNum/k0c37l1700291?radius=12.0&address=University+Endowment+Lands%2C+BC&ll=49.273128,-123.248764"
+  private def makePageUrl(pageNum: Int): KijijiUrl =
+    KijijiUrl(
+      BaseUrl + s"/b-apartments-condos/ubc-university-british-columbia/ubc/page-$pageNum/k0c37l1700291?radius=12.0&address=University+Endowment+Lands%2C+BC&ll=49.273128,-123.248764"
+    )
 
-  private def scrapeSingleListing(relUrl: String): F[CreateListing] =
-    kijiji.getHtml(BaseUrl + relUrl).flatMap { html =>
-      scraper.createListingFromPage(html, BaseUrl + relUrl)
+  private def scrapeSingleListing(url: ListingUrl): F[CreateListing] =
+    kijiji.getHtml(url.value).flatMap { html =>
+      scraper.createListingFromPage(
+        html,
+        url
+      )
     }
 
-  private def scrapeSinglePage(url: String): F[List[CreateListing]] =
+  private def scrapeSinglePage(url: KijijiUrl): F[List[CreateListing]] =
     for {
-      html <- kijiji.getHtml(url)
+      html <- kijiji.getHtml(url.value)
       urls <- scraper.getUrlsOnPage(html)
-      listings <- urls.parTraverse(scrapeSingleListing)
+      listings <- urls.parTraverse(relUrl =>
+        scrapeSingleListing(ListingUrl(BaseUrl + relUrl.value))
+      )
     } yield listings
 
   // scrapes the first three pages

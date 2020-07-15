@@ -10,8 +10,8 @@ import org.http4s.client._
 import org.http4s.client.middleware.FollowRedirect
 
 trait KijijiClient[F[_]] {
-  // TODO: newtypes
-  def getHtml(url: String): F[String]
+  // TODO: refined types?
+  def getHtml(url: String): F[Html]
 }
 
 final class LiveKijijiClient[F[_]: JsonDecoder: BracketThrow: Concurrent](
@@ -19,21 +19,21 @@ final class LiveKijijiClient[F[_]: JsonDecoder: BracketThrow: Concurrent](
 ) extends KijijiClient[F] {
 
   // TODO: not sure where to put
-  private implicit val str: EntityDecoder[F, String] =
-    EntityDecoder.text[F]
+  private implicit val htmlDecoder: EntityDecoder[F, Html] =
+    EntityDecoder.text[F].map(Html.apply)
 
   private val followRedirectClient: Client[F] =
     FollowRedirect(1)(client)
 
-  override def getHtml(url: String): F[String] =
+  override def getHtml(url: String): F[Html] =
     Uri.fromString(url).liftTo[F].flatMap { uri =>
       followRedirectClient.get(uri) { r =>
         if (r.status == Status.Ok)
-          r.as[String]
+          r.as[Html]
         else
           KijijiConnectionError(
             Option(r.status.reason).getOrElse("unknown")
-          ).raiseError[F, String]
+          ).raiseError[F, Html]
       }
     }
 

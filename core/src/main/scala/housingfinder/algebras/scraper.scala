@@ -7,6 +7,7 @@ import cats.Parallel
 import cats.effect.Sync
 import cats.implicits._
 import housingfinder.domain.listings._
+import housingfinder.domain.scraper._
 import housingfinder.effects.MonadThrow
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
@@ -14,8 +15,8 @@ import net.ruippeixotog.scalascraper.dsl.DSL._
 import squants.market.CAD
 
 trait Scraper[F[_]] {
-  def getUrlsOnPage(html: String): F[List[String]]
-  def createListingFromPage(html: String, url: String): F[CreateListing]
+  def getUrlsOnPage(html: Html): F[List[RelListingUrl]]
+  def createListingFromPage(html: Html, url: ListingUrl): F[CreateListing]
 }
 
 object LiveScraper {
@@ -29,11 +30,17 @@ object LiveScraper {
 final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
   private val browser = JsoupBrowser()
 
-  def getUrlsOnPage(html: String): F[List[String]] =
-    (browser.parseString(html) >> attrs("href")(".title .title")).toList.pure[F]
+  override def getUrlsOnPage(html: Html): F[List[RelListingUrl]] =
+    (browser.parseString(html.value) >> attrs("href")(".title .title"))
+      .map(RelListingUrl.apply)
+      .toList
+      .pure[F]
 
-  def createListingFromPage(html: String, url: String): F[CreateListing] = {
-    val doc = browser.parseString(html)
+  override def createListingFromPage(
+      html: Html,
+      url: ListingUrl
+  ): F[CreateListing] = {
+    val doc = browser.parseString(html.value)
 
     val title = doc >> text(".title-2323565163")
     val address = doc >> text(".address-3617944557")
@@ -56,7 +63,7 @@ final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
       CAD(price.getOrElse("1").toDouble),
       Description(description),
       datePosted,
-      ListingUrl(url)
+      url
     ).pure[F]
   }
 
