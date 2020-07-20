@@ -29,6 +29,9 @@ object Main extends IOApp {
                   cfg.httpServerConfig.host.value
                 )
                 .withHttpApp(api.httpApp)
+                .withResponseHeaderTimeout(
+                  cfg.httpServerConfig.responseHeaderTimeout
+                )
                 .serve
                 .compile
                 .drain
