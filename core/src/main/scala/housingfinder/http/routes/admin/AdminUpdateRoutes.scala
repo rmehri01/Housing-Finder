@@ -17,7 +17,6 @@ final class AdminUpdateRoutes[F[_]: Defer: MonadThrow](
 
   private[routes] val prefixPath = "/listings"
 
-  // TODO: error handling
   private val httpRoutes: AuthedRoutes[AdminUser, F] = AuthedRoutes.of {
 
     case PUT -> Root as _ =>
