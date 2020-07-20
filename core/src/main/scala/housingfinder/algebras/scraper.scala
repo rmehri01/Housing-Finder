@@ -2,6 +2,7 @@ package housingfinder.algebras
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 import cats.Parallel
 import cats.effect.Sync
@@ -53,7 +54,7 @@ final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
 
     val datePosted = LocalDateTime.parse(
       dateStr,
-      DateTimeFormatter.ofPattern("MMMM d, yyyy h:mm a")
+      DateTimeFormatter.ofPattern("MMMM d, yyyy h:mm a", Locale.ENGLISH)
     )
 
     // TODO: proper error handling, probably using validated
