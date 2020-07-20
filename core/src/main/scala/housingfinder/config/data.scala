@@ -47,7 +47,8 @@ object data {
 
   case class HttpServerConfig(
       host: NonEmptyString,
-      port: UserPortNumber
+      port: UserPortNumber,
+      responseHeaderTimeout: FiniteDuration
   )
 
   case class HttpClientConfig(

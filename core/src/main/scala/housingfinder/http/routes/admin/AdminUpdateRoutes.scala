@@ -22,7 +22,7 @@ final class AdminUpdateRoutes[F[_]: Defer: MonadThrow](
 
     case PUT -> Root as _ =>
       program.scrapeAndUpdate
-        .flatMap(Ok(_))
+        .flatMap(_ => Ok())
         .recoverWith {
           case KijijiConnectionError(e) => InternalServerError(e)
         }

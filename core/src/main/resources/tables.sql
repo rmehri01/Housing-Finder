@@ -3,7 +3,7 @@ CREATE TABLE listings
     uuid        UUID PRIMARY KEY,
     title       VARCHAR        NOT NULL,
     address     VARCHAR        NOT NULL,
-    price       NUMERIC        NOT NULL
+    price       NUMERIC
         CONSTRAINT positive_price CHECK ( price > 0 ),
     description VARCHAR        NOT NULL,
     date_posted TIMESTAMP      NOT NULL,

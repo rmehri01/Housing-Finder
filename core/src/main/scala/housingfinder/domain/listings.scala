@@ -4,10 +4,10 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 import eu.timepit.refined.api.Refined
-import eu.timepit.refined.string.{Url, ValidBigDecimal}
+import eu.timepit.refined.string.Url
 import eu.timepit.refined.types.string.NonEmptyString
 import io.estatico.newtype.macros.newtype
-import squants.market.{CAD, Money}
+import squants.market.Money
 
 object listings {
   @newtype case class ListingId(value: UUID)
@@ -20,7 +20,7 @@ object listings {
       uuid: ListingId,
       title: Title,
       address: Address,
-      price: Money,
+      price: Option[Money],
       description: Description,
       datePosted: LocalDateTime,
       url: ListingUrl
@@ -29,14 +29,13 @@ object listings {
   // create listing
   @newtype case class TitleParam(value: NonEmptyString)
   @newtype case class AddressParam(value: NonEmptyString)
-  @newtype case class PriceParam(value: String Refined ValidBigDecimal)
   @newtype case class DescriptionParam(value: NonEmptyString)
   @newtype case class ListingUrlParam(value: String Refined Url)
 
   case class CreateListingParam(
       title: TitleParam,
       address: AddressParam,
-      price: PriceParam,
+      price: Option[Money],
       description: DescriptionParam,
       datePosted: LocalDateTime,
       url: ListingUrlParam
@@ -45,7 +44,7 @@ object listings {
       CreateListing(
         Title(title.value.value),
         Address(address.value.value),
-        CAD(BigDecimal(price.value.value)),
+        price,
         Description(description.value.value),
         datePosted,
         ListingUrl(url.value.value)
@@ -55,7 +54,7 @@ object listings {
   case class CreateListing(
       title: Title,
       address: Address,
-      price: Money,
+      price: Option[Money],
       description: Description,
       dateTime: LocalDateTime,
       listingUrl: ListingUrl

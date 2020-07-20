@@ -13,7 +13,7 @@ import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops._
 import org.http4s.EntityEncoder
 import org.http4s.circe.jsonEncoderOf
-import squants.market.Money
+import squants.market.{CAD, Money}
 
 object json extends JsonCodecs {
   implicit def deriveEntityEncoder[F[_]: Applicative, A: Encoder]
@@ -38,6 +38,9 @@ private[http] trait JsonCodecs {
 
   implicit val moneyEncoder: Encoder[Money] =
     Encoder[BigDecimal].contramap(_.amount)
+
+  implicit val moneyDecoder: Decoder[Money] =
+    Decoder[BigDecimal].map(CAD(_))
 
   implicit val tokenEncoder: Encoder[JwtToken] =
     Encoder.forProduct1("accessToken")(_.value)

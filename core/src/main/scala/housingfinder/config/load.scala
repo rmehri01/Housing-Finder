@@ -50,8 +50,8 @@ object load {
         PasswordSalt(salt),
         TokenExpiration(30.minutes),
         HttpClientConfig(
-          connectTimeout = 10.minutes,
-          requestTimeout = 10.minutes
+          connectTimeout = 45.seconds,
+          requestTimeout = 45.seconds
         ),
         PostgreSQLConfig(
           host = "localhost",
@@ -63,7 +63,8 @@ object load {
         RedisConfig(redisUri),
         HttpServerConfig(
           host = "0.0.0.0",
-          port = 8080
+          port = 8080,
+          responseHeaderTimeout = 45.seconds
         )
       )
     }

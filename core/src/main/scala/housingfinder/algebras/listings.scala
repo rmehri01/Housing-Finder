@@ -57,7 +57,7 @@ final class LiveListings[F[_]: Sync] private (
 private object ListingQueries {
   val codec: Codec[Listing] =
     (uuid.cimap[ListingId] ~ varchar.cimap[Title] ~ varchar
-      .cimap[Address] ~ numeric.imap(CAD.apply)(_.amount) ~ varchar
+      .cimap[Address] ~ numeric.imap(CAD.apply)(_.amount).opt ~ varchar
       .cimap[Description] ~ timestamp ~ varchar.cimap[ListingUrl]).imap {
       case i ~ t ~ a ~ p ~ de ~ da ~ u => Listing(i, t, a, p, de, da, u)
     }(l =>
@@ -79,7 +79,9 @@ private object ListingQueries {
         ON CONFLICT (url) DO UPDATE
             SET title       = EXCLUDED.title,
                 address     = EXCLUDED.address,
+                price       = EXCLUDED.price,
                 description = EXCLUDED.address,
+                date_posted = EXCLUDED.date_posted,
                 url         = EXCLUDED.url
        """.command
   }

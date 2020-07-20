@@ -2,6 +2,7 @@ package housingfinder.algebras
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 import cats.Parallel
 import cats.effect.Sync
@@ -43,6 +44,7 @@ final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
 
     val title = doc >> text(".title-2323565163")
     val address = doc >> text(".address-3617944557")
+    // optional since the listing may have another price option like "Please Contact"
     val price = doc >?> attr("content")(".currentPrice-2842943473 span")
     val description = doc >> text(".descriptionContainer-3544745383 div")
     // on the site this is inconsistent, it is either in a time tag or just a span
@@ -52,14 +54,14 @@ final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
 
     val datePosted = LocalDateTime.parse(
       dateStr,
-      DateTimeFormatter.ofPattern("MMMM d, yyyy h:mm a")
+      DateTimeFormatter.ofPattern("MMMM d, yyyy h:mm a", Locale.ENGLISH)
     )
 
     // TODO: proper error handling, probably using validated
     CreateListing(
       Title(title),
       Address(address),
-      CAD(price.getOrElse("1").toDouble),
+      price.map(s => CAD(s.toDouble)),
       Description(description),
       datePosted,
       url
