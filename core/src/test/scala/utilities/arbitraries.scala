@@ -8,6 +8,7 @@ import housingfinder.domain.healthcheck.AppStatus
 import housingfinder.domain.listings._
 import housingfinder.domain.scraper.ErrorMessage
 import org.scalacheck.Arbitrary
+import squants.market.Money
 import utilities.generators._
 
 // Instances of Arbitrary that allow ScalaCheck to generate values to test against
@@ -46,6 +47,9 @@ object arbitraries {
 
   implicit val arbCreateUserParam: Arbitrary[CreateUserParam] =
     Arbitrary(genCreateUserParam)
+
+  implicit val arbMoney: Arbitrary[Money] =
+    Arbitrary(genMoney)
 
   implicit val arbLoginUserParam: Arbitrary[LoginUserParam] =
     Arbitrary(genLoginUserParam)

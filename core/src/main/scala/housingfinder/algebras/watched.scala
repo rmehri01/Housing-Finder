@@ -32,7 +32,7 @@ final class LiveWatched[F[_]: BracketThrow: Sync] private (
   override def get(userId: UserId): F[List[Listing]] =
     sessionPool.use { session =>
       session.prepare(selectAll).use { q =>
-        q.stream(userId, 1024).compile.toList
+        q.stream(userId, 64).compile.toList
       }
     }
 

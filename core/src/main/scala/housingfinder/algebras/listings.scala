@@ -11,8 +11,7 @@ import skunk.implicits._
 import squants.market._
 
 trait Listings[F[_]] {
-  // TODO: some way to filter out listings by desired properties
-  def get: F[List[Listing]]
+  def get(priceRange: PriceRange = PriceRange(None, None)): F[List[Listing]]
   def addAll(createListings: List[CreateListing]): F[Unit]
 }
 
@@ -26,8 +25,14 @@ final class LiveListings[F[_]: Sync] private (
 ) extends Listings[F] {
   import ListingQueries._
 
-  override def get: F[List[Listing]] =
-    sessionPool.use(_.execute(selectAll))
+  override def get(priceRange: PriceRange): F[List[Listing]] =
+    sessionPool.use { session =>
+      session.execute(createSelectListingsFunction).void *> session
+        .prepare(selectListings)
+        .use { q =>
+          q.stream(priceRange.lower ~ priceRange.upper, 64).compile.toList
+        }
+    }
 
   override def addAll(createListings: List[CreateListing]): F[Unit] =
     sessionPool.use { session =>
@@ -55,19 +60,46 @@ final class LiveListings[F[_]: Sync] private (
 }
 
 private object ListingQueries {
-  val codec: Codec[Listing] =
-    (uuid.cimap[ListingId] ~ varchar.cimap[Title] ~ varchar
-      .cimap[Address] ~ numeric.imap(CAD.apply)(_.amount).opt ~ varchar
-      .cimap[Description] ~ timestamp ~ varchar.cimap[ListingUrl]).imap {
-      case i ~ t ~ a ~ p ~ de ~ da ~ u => Listing(i, t, a, p, de, da, u)
-    }(l =>
-      l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted ~ l.url
-    )
+  val idCodec: Codec[ListingId] = uuid.cimap[ListingId]
+  val titleCodec: Codec[Title] = varchar.cimap[Title]
+  val addressCodec: Codec[Address] = varchar.cimap[Address]
 
-  val selectAll: Query[Void, Listing] =
+  val moneyCodec: Codec[Money] = numeric.imap(CAD.apply)(_.amount)
+  val optMoneyCodec: Codec[Option[Money]] = moneyCodec.opt
+
+  val descriptionCodec: Codec[Description] = varchar.cimap[Description]
+  val urlCodec: Codec[ListingUrl] = varchar.cimap[ListingUrl]
+
+  val codec: Codec[Listing] =
+    (idCodec ~ titleCodec ~ addressCodec ~ optMoneyCodec ~ descriptionCodec ~ timestamp ~ urlCodec)
+      .imap {
+        case i ~ t ~ a ~ p ~ de ~ da ~ u => Listing(i, t, a, p, de, da, u)
+      }(l =>
+        l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted ~ l.url
+      )
+
+  val createSelectListingsFunction: Command[Void] =
     sql"""
-         SELECT * FROM listings
-         ORDER BY date_posted DESC
+        CREATE OR REPLACE FUNCTION select_listings(lower NUMERIC, upper NUMERIC)
+            RETURNS SETOF listings
+            LANGUAGE plpgsql AS
+        '
+            BEGIN
+                RETURN QUERY
+                    SELECT *
+                    FROM listings
+                    WHERE (lower IS NULL OR lower <= price)
+                      AND (upper IS NULL OR upper >= price)
+                    ORDER BY date_posted DESC;
+            END
+        '
+      """.command
+
+  val selectListings: Query[Option[LowerBound] ~ Option[UpperBound], Listing] =
+    sql"""
+        SELECT *
+        FROM select_listings(${moneyCodec.cimap[LowerBound].opt},
+            ${moneyCodec.cimap[UpperBound].opt})
        """.query(codec)
 
   // if the url is the same, updates the listing instead of creating a new one

@@ -10,10 +10,11 @@ import eu.timepit.refined.types.string.NonEmptyString
 import housingfinder.algebras._
 import housingfinder.config.data.PasswordSalt
 import housingfinder.domain.auth.{Password, Username}
-import housingfinder.domain.listings.{CreateListing, Title}
+import housingfinder.domain.listings._
 import io.estatico.newtype.ops._
 import natchez.Trace.Implicits.noop
 import skunk.Session
+import squants.market.Money
 import suite.ResourceSuite
 import utilities.arbitraries._
 
@@ -30,31 +31,46 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
 
   withResources { pool =>
     forAll(MaxTests) {
-      (c: CreateListing, t: Title, cs: NonEmptyList[CreateListing]) =>
+      (
+          t: Title,
+          cs: NonEmptyList[CreateListing],
+          m1: Money,
+          m2: Money
+      ) =>
         spec("Listings") {
           LiveListings.make(pool).flatMap { l =>
             for {
-              // single listing is added successfully
-              x <- l.get
-              _ <- l.addAll(List(c))
-              y <- l.get
+              // multiple listings are added successfully
+              x <- l.get()
+              _ <- l.addAll(cs.toList)
+              a <- l.get()
+              csInDb = a.filter(li => cs.exists(_.title == li.title))
+
+              // getting by price ranges works correctly
+              lower = m1.min(m2)
+              upper = m1.max(m2)
+              lowerBound = LowerBound(lower).some
+              upperBound = UpperBound(upper).some
+              
+              b <- l.get(PriceRange(lowerBound, None))
+              d <- l.get(PriceRange(None, upperBound))
+              e <- l.get(PriceRange(lowerBound, upperBound))
 
               // the added listing is updated but id stays the same
-              yId = y.head.uuid
-              _ <- l.addAll(List(c.copy(title = t)))
-              z <- l.get
-
-              // multiple listings are added successfully
-              _ <- l.addAll(cs.toList)
-              a <- l.get
+              fl = cs.head
+              flId = csInDb.head.uuid
+              _ <- l.addAll(List(fl.copy(title = t)))
+              z <- l.get()
             } yield assert(
               x.isEmpty &&
-                y.count(_.title == c.title) === 1 &&
+                csInDb.length === cs.length &&
+                b == csInDb.filter(_.price.get >= lower) &&
+                d == csInDb.filter(_.price.get <= upper) &&
+                e == csInDb
+                  .filter(l => l.price.get >= lower && l.price.get <= upper) &&
                 z.count(listing =>
-                  listing.uuid == yId && listing.title == t
-                ) === 1 &&
-                a.filter(_.title != t)
-                  .forall(li => cs.exists(cr => cr.title == li.title))
+                  listing.uuid == flId && listing.title == t
+                ) === 1
             )
           }
         }
@@ -94,8 +110,8 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
             // add a listing to be used later
             l <- LiveListings.make[IO](pool)
             _ <- l.addAll(List(c))
-            l <- l.get
-            lId = l.head.uuid
+            l <- l.get()
+            lId = l.find(_.title == c.title).get.uuid
 
             // create a user
             c <- LiveCrypto.make[IO](salt)
