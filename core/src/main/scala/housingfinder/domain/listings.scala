@@ -59,4 +59,10 @@ object listings {
       dateTime: LocalDateTime,
       listingUrl: ListingUrl
   )
+
+  // getting by price
+  @newtype case class LowerBound(value: Money)
+  @newtype case class UpperBound(value: Money)
+
+  case class PriceRange(lower: Option[LowerBound], upper: Option[UpperBound])
 }

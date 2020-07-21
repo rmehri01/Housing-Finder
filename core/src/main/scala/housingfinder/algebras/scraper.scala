@@ -50,7 +50,7 @@ final class LiveScraper[F[_]: MonadThrow: Parallel] extends Scraper[F] {
     val price = doc >?> attr("content")(".currentPrice-2842943473 span")
 
     val description = doc >> text(".descriptionContainer-3544745383 div")
-    
+
     // on the site this is inconsistent, it is either in a time tag or just a span
     val dateStr =
       (doc >?> attr("title")("time"))

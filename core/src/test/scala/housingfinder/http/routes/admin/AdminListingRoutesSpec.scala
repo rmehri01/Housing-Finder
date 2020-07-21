@@ -99,7 +99,8 @@ class AdminListingRoutesSpec extends AuthHttpTestSuite {
 }
 
 protected class TestListings extends Listings[IO] {
-  override def get: IO[List[Listing]] = IO.pure(List.empty)
+  override def get(priceRange: PriceRange): IO[List[Listing]] =
+    IO.pure(List.empty)
 
   override def addAll(createListings: List[CreateListing]): IO[Unit] =
     IO.unit

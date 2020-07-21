@@ -19,8 +19,8 @@ final class UserRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
   private[routes] val prefixPath = "/auth"
 
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of {
-    case ar @ POST -> Root / "users" =>
-      ar.decodeR[CreateUserParam] { user =>
+    case req @ POST -> Root / "users" =>
+      req.decodeR[CreateUserParam] { user =>
         auth
           .newUser(user.username.toDomain, user.password.toDomain)
           .flatMap(Created(_))

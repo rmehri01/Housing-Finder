@@ -2,7 +2,7 @@ package housingfinder.http.routes
 
 import cats.effect.IO
 import housingfinder.algebras.Listings
-import housingfinder.domain.listings.{CreateListing, Listing}
+import housingfinder.domain.listings.{CreateListing, Listing, PriceRange}
 import housingfinder.http.json._
 import org.http4s.Method._
 import org.http4s._
@@ -33,18 +33,20 @@ class ListingRoutesSpec extends HttpTestSuite {
 
   def dataListings(listings: List[Listing]): Listings[IO] =
     new TestListings {
-      override def get: IO[List[Listing]] = IO.pure(listings)
+      override def get(priceRange: PriceRange): IO[List[Listing]] =
+        IO.pure(listings)
     }
 
   def failingListings(listings: List[Listing]): Listings[IO] =
     new TestListings {
-      override def get: IO[List[Listing]] =
+      override def get(priceRange: PriceRange): IO[List[Listing]] =
         IO.raiseError(DummyError) *> IO.pure(listings)
     }
 }
 
 protected class TestListings extends Listings[IO] {
-  override def get: IO[List[Listing]] = IO.pure(List.empty)
+  override def get(priceRange: PriceRange): IO[List[Listing]] =
+    IO.pure(List.empty)
 
   override def addAll(createListings: List[CreateListing]): IO[Unit] =
     IO.unit

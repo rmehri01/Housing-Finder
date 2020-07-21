@@ -35,18 +35,18 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
           LiveListings.make(pool).flatMap { l =>
             for {
               // single listing is added successfully
-              x <- l.get
+              x <- l.get()
               _ <- l.addAll(List(c))
-              y <- l.get
+              y <- l.get()
 
               // the added listing is updated but id stays the same
               yId = y.head.uuid
               _ <- l.addAll(List(c.copy(title = t)))
-              z <- l.get
+              z <- l.get()
 
               // multiple listings are added successfully
               _ <- l.addAll(cs.toList)
-              a <- l.get
+              a <- l.get()
             } yield assert(
               x.isEmpty &&
                 y.count(_.title == c.title) === 1 &&
@@ -94,7 +94,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
             // add a listing to be used later
             l <- LiveListings.make[IO](pool)
             _ <- l.addAll(List(c))
-            l <- l.get
+            l <- l.get()
             lId = l.head.uuid
 
             // create a user
