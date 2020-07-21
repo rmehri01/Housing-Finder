@@ -40,7 +40,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
               y <- l.get()
 
               // the added listing is updated but id stays the same
-              yId = y.head.uuid
+              yId = y.find(_.title == c.title).get.uuid
               _ <- l.addAll(List(c.copy(title = t)))
               z <- l.get()
 
@@ -48,13 +48,12 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
               _ <- l.addAll(cs.toList)
               a <- l.get()
             } yield assert(
-              x.isEmpty &&
+              !x.exists(_.title == c.title) &&
                 y.count(_.title == c.title) === 1 &&
                 z.count(listing =>
                   listing.uuid == yId && listing.title == t
                 ) === 1 &&
-                a.filter(_.title != t)
-                  .forall(li => cs.exists(cr => cr.title == li.title))
+                a.count(li => cs.exists(_.title == li.title)) === cs.length
             )
           }
         }
@@ -95,7 +94,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
             l <- LiveListings.make[IO](pool)
             _ <- l.addAll(List(c))
             l <- l.get()
-            lId = l.head.uuid
+            lId = l.find(_.title == c.title).get.uuid
 
             // create a user
             c <- LiveCrypto.make[IO](salt)
