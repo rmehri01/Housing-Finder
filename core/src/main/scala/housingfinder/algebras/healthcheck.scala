@@ -12,6 +12,7 @@ import skunk.implicits._
 
 import scala.concurrent.duration._
 
+/** Provides a way to check on the different parts of the application. */
 trait HealthCheck[F[_]] {
   def status: F[AppStatus]
 }
