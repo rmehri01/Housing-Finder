@@ -10,9 +10,18 @@ import skunk._
 import skunk.codec.all._
 import skunk.implicits._
 
+/** Deals with the users that are persisted in some storage. */
 trait Users[F[_]] {
+
+  /** Returns the user if both a matching username and password are found. */
   def find(username: Username, password: Password): F[Option[User]]
+
+  /** Creates a new user with the given username and password.
+    *
+    * Raises a [[UsernameInUse]] error if a user with the given username already exists.
+    */
   def create(username: Username, password: Password): F[UserId]
+
 }
 
 object LiveUsers {

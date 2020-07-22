@@ -11,6 +11,7 @@ import skunk._
 import skunk.codec.all._
 import skunk.implicits._
 
+/** Provides a way for users to watch certain listings. */
 trait Watched[F[_]] {
   def get(userId: UserId): F[List[Listing]]
   def add(userId: UserId, listingId: ListingId): F[Unit]

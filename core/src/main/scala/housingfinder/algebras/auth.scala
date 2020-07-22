@@ -14,12 +14,14 @@ import io.circe.parser.decode
 import io.circe.syntax._
 import pdi.jwt.JwtClaim
 
+/** Deals with session authentication of users. */
 trait Auth[F[_]] {
   def newUser(username: Username, password: Password): F[JwtToken]
   def login(username: Username, password: Password): F[JwtToken]
   def logout(token: JwtToken, username: Username): F[Unit]
 }
 
+/** Tries to find users of a specific type A, for example [[CommonUser]] or [[AdminUser]]. */
 trait UsersAuth[F[_], A] {
   def findUser(token: JwtToken)(claim: JwtClaim): F[Option[A]]
 }
@@ -95,6 +97,7 @@ final class LiveAuth[F[_]: MonadThrow] private (
       case Some(_) => UsernameInUse(username).raiseError[F, JwtToken]
       case None =>
         for {
+          // Create the user in persisted storage, then given them a JWT and put them in Redis.
           i <- users.create(username, password)
           t <- tokens.create
           u = User(i, username).asJson.noSpaces
@@ -108,7 +111,10 @@ final class LiveAuth[F[_]: MonadThrow] private (
       case None => InvalidUserOrPassword(username).raiseError[F, JwtToken]
       case Some(user) =>
         redis.get(username.value).flatMap {
+          // If the user is already found in Redis, just return the JWT.
           case Some(t) => JwtToken(t).pure[F]
+
+          // Otherwise, create a new token for them to login with and put it in Redis.
           case None =>
             tokens.create.flatTap { t =>
               redis.setEx(t.value, user.asJson.noSpaces, tokenExpiryDuration) *>
