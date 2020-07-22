@@ -5,6 +5,7 @@ import cats.{ApplicativeError, MonadError}
 
 package object effects {
 
+  // type aliases for throwable errors for readability
   type BracketThrow[F[_]] = Bracket[F, Throwable]
 
   object BracketThrow {

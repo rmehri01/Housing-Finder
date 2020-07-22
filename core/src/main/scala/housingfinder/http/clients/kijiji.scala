@@ -11,7 +11,10 @@ import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.client.middleware.FollowRedirect
 
 trait KijijiClient[F[_]] {
+
+  /** Retrieves the raw HTML response from the given url. */
   def getHtml(url: String): F[Html]
+
 }
 
 final class LiveKijijiClient[F[_]: JsonDecoder: BracketThrow: Concurrent](
