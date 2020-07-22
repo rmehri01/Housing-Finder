@@ -51,7 +51,7 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
               upper = m1.max(m2)
               lowerBound = LowerBound(lower).some
               upperBound = UpperBound(upper).some
-              
+
               b <- l.get(PriceRange(lowerBound, None))
               d <- l.get(PriceRange(None, upperBound))
               e <- l.get(PriceRange(lowerBound, upperBound))

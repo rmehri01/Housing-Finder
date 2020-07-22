@@ -11,8 +11,16 @@ import skunk.implicits._
 import squants.market._
 
 trait Listings[F[_]] {
+
+  /** Returns a list of listings and optionally filters by price boundaries.
+    *
+    * @param priceRange the price range to filter by, set to no boundaries by default.
+    */
   def get(priceRange: PriceRange = PriceRange(None, None)): F[List[Listing]]
+
+  /** Stores listings made from the given list of CreateListings. */
   def addAll(createListings: List[CreateListing]): F[Unit]
+
 }
 
 object LiveListings {
@@ -78,6 +86,10 @@ private object ListingQueries {
         l.uuid ~ l.title ~ l.address ~ l.price ~ l.description ~ l.datePosted ~ l.url
       )
 
+  /** Command to create an SQL function that gets listings according to lower and upper prices.
+    *
+    * Boundary arguments may be null and if so, they are not included in the filtering.
+    */
   val createSelectListingsFunction: Command[Void] =
     sql"""
         CREATE OR REPLACE FUNCTION select_listings(lower NUMERIC, upper NUMERIC)
@@ -95,6 +107,11 @@ private object ListingQueries {
         '
       """.command
 
+  /** SQL query to filter listings by the given optional boundaries.
+    *
+    * Requires that [[createSelectListingsFunction]] is run first since a prepared query
+    * cannot run more than one query at once.
+    */
   val selectListings: Query[Option[LowerBound] ~ Option[UpperBound], Listing] =
     sql"""
         SELECT *
@@ -102,11 +119,14 @@ private object ListingQueries {
             ${moneyCodec.cimap[UpperBound].opt})
        """.query(codec)
 
-  // if the url is the same, updates the listing instead of creating a new one
+  /** Insert a list of listings into Postgres.
+    *
+    * If the url is the same, updates the listing instead of creating a new one.
+    */
   def insertListings(ls: List[Listing]): Command[ls.type] = {
     val listingsCodec = codec.values.list(ls)
     sql"""
-        INSERT INTO listings (uuid, title, address, price, description, date_posted, url)
+        INSERT INTO listings
         VALUES $listingsCodec
         ON CONFLICT (url) DO UPDATE
             SET title       = EXCLUDED.title,
