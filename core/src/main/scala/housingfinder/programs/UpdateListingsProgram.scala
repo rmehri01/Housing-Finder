@@ -38,7 +38,7 @@ final class UpdateListingsProgram[F[_]: Monad: Parallel](
       )
     } yield listings
 
-  // scrapes the first three pages
+  /** Scrapes the first three pages of Kijiji listings and adds them to the database. */
   def scrapeAndUpdate: F[Unit] =
     (1 to 3)
       .map(makePageUrl)
