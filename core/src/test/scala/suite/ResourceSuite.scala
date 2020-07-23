@@ -4,6 +4,7 @@ import cats.effect._
 import cats.effect.concurrent.Deferred
 import org.scalatest.BeforeAndAfterAll
 
+/** Hides dealing with shared test resources such as a Postgres connection. */
 trait ResourceSuite[A] extends PureTestSuite with BeforeAndAfterAll {
 
   def resources: Resource[IO, A]
@@ -32,7 +33,7 @@ trait ResourceSuite[A] extends PureTestSuite with BeforeAndAfterAll {
 
   def withResources(f: (=> A) => Unit): Unit =
     f {
-      // to ensure that the resource has been allocated even before any spec(...) bodies
+      // To ensure that the resource has been allocated even before any spec(...) bodies
       latch.get.unsafeRunSync
       res
     }
