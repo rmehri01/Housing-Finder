@@ -24,6 +24,7 @@ final case class AppResources[F[_]] private (
 
 object AppResources {
 
+  /** Smart constructor that uses an [[AppConfig]] to create the resources for the application. */
   def make[F[_]: ConcurrentEffect: ContextShift: Logger: Timer: Parallel](
       cfg: AppConfig
   ): Resource[F, AppResources[F]] = {

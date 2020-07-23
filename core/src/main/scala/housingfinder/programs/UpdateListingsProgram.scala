@@ -7,6 +7,13 @@ import housingfinder.domain.listings.{CreateListing, ListingUrl}
 import housingfinder.domain.scraper.KijijiUrl
 import housingfinder.http.clients.KijijiClient
 
+/** Program for getting listings off of a website and then adding them to the database.
+  *
+  * Uses the client to retrieve the HTML, the scraper to extract listings, and the listings database
+  * to add the results for later use.
+  *
+  * The current implementation both gets and scrapes the pages in parallel.
+  */
 final class UpdateListingsProgram[F[_]: Monad: Parallel](
     listings: Listings[F],
     scraper: Scraper[F],
