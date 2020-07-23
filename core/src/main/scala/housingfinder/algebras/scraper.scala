@@ -16,7 +16,8 @@ import squants.market.CAD
 
 /** Provides a way to extract listing information when given HTML.
   *
-  * This is a bit coupled with the client that gets the HTML but this client gives more control over
+  * This is slightly coupled with the client that gets the HTML, since not all websites
+  * will need to get the urls on the page. However, using this client gives more control over
   * the level of parallelism than the JsoupBrowser does.
   */
 trait Scraper[F[_]] {

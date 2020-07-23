@@ -16,6 +16,7 @@ object Programs {
     )
 }
 
+/** Uses algebras and clients to create the needed programs. */
 final class Programs[F[_]: Logger: MonadThrow: Timer: Parallel] private (
     algebras: Algebras[F],
     clients: HttpClients[F]

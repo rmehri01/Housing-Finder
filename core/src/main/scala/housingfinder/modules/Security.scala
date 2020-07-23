@@ -13,6 +13,7 @@ import io.circe.parser.{decode => jsonDecode}
 import pdi.jwt._
 import skunk.Session
 
+/** Defines instances of users and contains authentication related functionality. */
 object Security {
   def make[F[_]: Sync](
       cfg: AppConfig,

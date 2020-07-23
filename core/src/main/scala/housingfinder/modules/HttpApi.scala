@@ -30,11 +30,14 @@ object HttpApi {
     )
 }
 
+/** Combines all of the different http routes into a full http app. */
 final class HttpApi[F[_]: Concurrent: Timer] private (
     algebras: Algebras[F],
     programs: Programs[F],
     security: Security[F]
 ) {
+
+  // Middleware for only allowing certain users for secured/admin routes
   private val adminMiddleware =
     JwtAuthMiddleware[F, AdminUser](
       security.adminJwtAuth.value,
@@ -91,9 +94,9 @@ final class HttpApi[F[_]: Concurrent: Timer] private (
 
   private val loggers: HttpApp[F] => HttpApp[F] = {
     { http: HttpApp[F] =>
-      RequestLogger.httpApp(true, true)(http)
+      RequestLogger.httpApp(logHeaders = true, logBody = true)(http)
     } andThen { http: HttpApp[F] =>
-      ResponseLogger.httpApp(true, true)(http)
+      ResponseLogger.httpApp(logHeaders = true, logBody = true)(http)
     }
   }
 
