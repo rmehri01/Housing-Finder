@@ -1,32 +1,24 @@
 # Housing Finder
 
-![GitHub Actions Status](https://github.com/rmehri01/Housing-Finder-API/workflows/Build/badge.svg)
-[![codecov](https://codecov.io/gh/rmehri01/Housing-Finder-API/branch/master/graph/badge.svg?token=XAW1NC5JT9)](https://codecov.io/gh/rmehri01/Housing-Finder-API) <a href="https://typelevel.org/cats/"><img src="https://typelevel.org/cats/img/cats-badge.svg" height="40px" align="right" alt="Cats friendly" /></a> 
+![GitHub Actions Status](https://github.com/rmehri01/Housing-Finder/workflows/Build/badge.svg)
+[![codecov](https://codecov.io/gh/rmehri01/Housing-Finder/branch/master/graph/badge.svg?token=XAW1NC5JT9)](https://codecov.io/gh/rmehri01/Housing-Finder) <a href="https://typelevel.org/cats/"><img src="https://typelevel.org/cats/img/cats-badge.svg" height="40px" align="right" alt="Cats friendly" /></a>
 
-A basic Typelevel Project
+## About
 
-### Usage
+> A robust and extensible housing finder powered by functional programming.
 
-Add this to your `build.sbt`:
+Initially, this was a web app that I made to help UBC students find housing off-campus in the Vancouver area. I found that visiting numerous different sites to do so is time consuming and quite repetitive, so I wanted to have one place where students can quickly see the specifications of each listing.
 
-```scala
-libraryDependencies += "com.rmehri01" %% "housing-finder" % "<version>"
-```
+Since then I have worked on making the app more extensible, so while the current implementation still gets listings for UBC, it is now much easier to get listings from other places or sources. I have also added some other features that were mostly for fun or learning purposes but that I still thought were nice to have:
 
-Cross-builds are available for Scala 2.12.10 and 2.13.1.
+* User login so that users can add listings to a personal watch list.
+* Caching listing results in a database to drastically reduce the time taken to retrieve them.
+* Deploying the app using serverless technologies to save on costs.
 
-### Community
+### Robust
 
-Any contribution is more than welcome. Also feel free to report bugs, request features using github issues.
+### Extensible
 
-People are expected to follow the [Scala Code Of Conduct](https://www.scala-lang.org/conduct/) when discussing housing-finder on the Github page, Gitter channel, or other venues.
+## Usage
 
-### Maintainers
-
-* [rmehri01](https://github.com/rmehri01)
-
-### License
-
-MIT License
-
-Written in 2020 by [Ryan Mehri](https://github.com/rmehri01).
+## Credit
