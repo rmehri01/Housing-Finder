@@ -17,8 +17,36 @@ Since then I have worked on making the app more extensible, so while the current
 
 ### Robust
 
+The error handling mechanics provided by functional programming allow you to only focus on errors related to business logic while letting the frameworks handle the rest. In this way, the code does not get polluted with error checks or try/catch blocks, while still maintaining a robust system in the case of other errors such as an internal server error.
+
+Explicit encoding and handling of errors in typeclasses such as `Option` or `Either` make sure that less can go wrong, since you can safely perform operations these typeclasses, like on a `None` but would end up with a `NullPointerException` if doing so with a `null` value.
+
+As an example, when trying to create a new user, that username may already be in use. Thus, in `user.find`, we check if some value already exists and raise a `UsernameInUse` error:
+
+```scala
+users.find(username, password).flatMap {
+  case Some(_) => UsernameInUse(username).raiseError[F, JwtToken]
+  case None    => ???
+}
+```
+
+Then later on in the HTTP route, we try to create a new user but if it fails with `UsernameInUse`, we recover with returning `409 Conflict`:
+
+```scala
+auth
+  .newUser(username, password)
+  .flatMap(Created(_))
+  .recoverWith {
+    case UsernameInUse(u) => Conflict(u.value)
+  }
+```
+
+And that's it, clean and simple!
+
 ### Extensible
 
 ## Usage
 
 ## Credit
+
+I was inspired to make this project after reading [Practical FP in Scala](https://leanpub.com/pfp-scala) since I wanted to practice applying the concepts in it by doing a project of my own. So big thanks to Gabriel Volpe as well as the whole Scala open source community for their help and great libraries!
