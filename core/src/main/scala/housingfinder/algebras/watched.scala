@@ -43,9 +43,9 @@ final class LiveWatched[F[_]: BracketThrow: Sync] private (
         cmd
           .execute(userId ~ listingId)
           .void
-          .handleErrorWith {
+          .adaptError {
             case SqlState.UniqueViolation(_) =>
-              AlreadyWatched(listingId).raiseError[F, Unit]
+              AlreadyWatched(listingId)
           }
       }
     }

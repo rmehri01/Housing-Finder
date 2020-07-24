@@ -57,9 +57,9 @@ final class LiveUsers[F[_]: BracketThrow: GenUUID] private (
           cmd
             .execute(User(id, username) ~ crypto.encrypt(password))
             .as(id)
-            .handleErrorWith {
+            .adaptError {
               case SqlState.UniqueViolation(_) =>
-                UsernameInUse(username).raiseError[F, UserId]
+                UsernameInUse(username)
             }
         }
       }
