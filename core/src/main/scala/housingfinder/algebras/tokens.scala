@@ -8,6 +8,7 @@ import housingfinder.effects.GenUUID
 import io.circe.syntax._
 import pdi.jwt.{JwtAlgorithm, JwtClaim}
 
+/** Provides a way to generate JSON Web Tokens. */
 trait Tokens[F[_]] {
   def create: F[JwtToken]
 }
@@ -27,6 +28,7 @@ final class LiveTokens[F[_]: GenUUID: Sync] private (
     exp: TokenExpiration
 )(implicit ev: java.time.Clock)
     extends Tokens[F] {
+
   override def create: F[JwtToken] =
     for {
       uuid <- GenUUID[F].make
@@ -36,4 +38,5 @@ final class LiveTokens[F[_]: GenUUID: Sync] private (
       secretKey = JwtSecretKey(config.value.value.value)
       token <- jwtEncode[F](claim, secretKey, JwtAlgorithm.HS256)
     } yield token
+
 }

@@ -4,7 +4,7 @@ import cats._
 import cats.implicits._
 import housingfinder.algebras.Watched
 import housingfinder.domain.listings.ListingId
-import housingfinder.domain.watched.AlreadyWatched
+import housingfinder.domain.watched.{AlreadyWatched, InvalidListingId}
 import housingfinder.effects.MonadThrow
 import housingfinder.http.auth.users.CommonUser
 import housingfinder.http.json._
@@ -26,9 +26,10 @@ final class WatchedRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
     case POST -> Root / UUIDVar(uuid) as user =>
       watched
         .add(user.value.id, ListingId(uuid))
-        .flatMap(Created(_))
+        .flatMap(_ => Created())
         .recoverWith {
-          case AlreadyWatched(id) => Conflict(id)
+          case AlreadyWatched(id)   => Conflict(id)
+          case InvalidListingId(id) => UnprocessableEntity(id)
         }
 
     case DELETE -> Root / UUIDVar(uuid) as user =>

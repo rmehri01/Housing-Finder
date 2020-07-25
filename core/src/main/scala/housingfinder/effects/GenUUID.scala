@@ -7,9 +7,14 @@ import cats.implicits._
 import io.estatico.newtype.Coercible
 import io.estatico.newtype.ops._
 
+/** Deals with the generation of UUIDs that may be coerced into newtypes. */
 trait GenUUID[F[_]] {
   def make: F[UUID]
+
+  /** Generates a UUID and coerces it into type A. */
   def make[A: Coercible[UUID, *]]: F[A]
+
+  /** Tries to coerce given str into type A. */
   def read[A: Coercible[UUID, *]](str: String): F[A]
 }
 

@@ -20,6 +20,7 @@ object Algebras {
     } yield new Algebras[F](listings, scraper, watched, health)
 }
 
+/** Combines all algebras into a single class where they can all be accessed. */
 final class Algebras[F[_]] private (
     val listings: Listings[F],
     val scraper: Scraper[F],

@@ -15,6 +15,9 @@ import scala.concurrent.duration._
 
 object load {
 
+  /** Based on the [[housingfinder.config.environments.AppEnvironment]],
+    * load the default settings in a different way.
+    */
   def apply[F[_]: Async: ContextShift]: F[AppConfig] =
     env("HF_APP_ENV")
       .as[AppEnvironment]
@@ -30,6 +33,7 @@ object load {
       }
       .load[F]
 
+  /** The default configuration for the application based on environment variables. */
   private def default(
       redisUri: RedisURI
   ): ConfigValue[AppConfig] =

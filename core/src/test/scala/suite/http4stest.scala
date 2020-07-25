@@ -15,6 +15,7 @@ import org.scalatest.Assertion
 
 import scala.util.control.NoStackTrace
 
+/** Provides generalized helper functions for running assertions on different HTTP routes. */
 class HttpTestSuite extends PureTestSuite {
 
   case object DummyError extends NoStackTrace

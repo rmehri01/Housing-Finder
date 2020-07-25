@@ -6,6 +6,7 @@ import io.chrisdavenport.log4cats.Logger
 
 object logger {
 
+  /** Logger that only appends error messages since we are not interested in logging every method. */
   implicit object NoOp extends NoLogger
 
   def acc(ref: Ref[IO, List[String]]): Logger[IO] =

@@ -15,6 +15,7 @@ import org.http4s.EntityEncoder
 import org.http4s.circe.jsonEncoderOf
 import squants.market.{CAD, Money}
 
+/** Json codecs (encoders and decoders) for the needed classes. */
 object json extends JsonCodecs {
   implicit def deriveEntityEncoder[F[_]: Applicative, A: Encoder]
       : EntityEncoder[F, A] = jsonEncoderOf[F, A]

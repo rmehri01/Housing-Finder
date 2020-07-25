@@ -9,7 +9,7 @@ services:
     environment:
       - DEBUG=false
       - HF_ACCESS_TOKEN_SECRET_KEY=-*any_secret*-
-      - "HF_JWT_SECRET_KEY=any_secret"
+      - HF_JWT_SECRET_KEY=any_secret
       - 'HF_JWT_CLAIM={"uuid": "6290c116-4152-11ea-b67f-2e728ce89025"}'
       - HF_ADMIN_USER_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkIjogIjYyOTBjMTE2LTQxNTItMTFlYS1iNjdmLTJlNzI4Y2U4OTAyNSJ9.Gryl-fFp9JClbD8-Z46bIOS5sVJjHkjF8sTZOJFcYzc
       - HF_PASSWORD_SALT=06!grsnxXG0d*Pj496p6fuA*o

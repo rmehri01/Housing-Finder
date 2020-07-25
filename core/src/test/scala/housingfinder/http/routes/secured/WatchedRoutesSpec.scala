@@ -3,7 +3,7 @@ package housingfinder.http.routes.secured
 import cats.effect.IO
 import housingfinder.algebras.Watched
 import housingfinder.domain.listings.{Listing, ListingId}
-import housingfinder.domain.watched.AlreadyWatched
+import housingfinder.domain.watched.{AlreadyWatched, InvalidListingId}
 import housingfinder.domain.{auth, listings}
 import housingfinder.http.json._
 import org.http4s.Method._
@@ -47,6 +47,17 @@ class WatchedRoutesSpec extends AuthHttpTestSuite {
   }
 
   forAll { (l: ListingId) =>
+    spec("POST add listing, invalid id [ERROR]") {
+      POST(uri"/watched" / l.value.toString).flatMap { req =>
+        val routes = new WatchedRoutes(failingWatchedInvalidListingId).routes(
+          authUserMiddleware
+        )
+        assertHttp(routes, req)(Status.UnprocessableEntity, l)
+      }
+    }
+  }
+
+  forAll { (l: ListingId) =>
     spec("DELETE remove listing from watched list [OK]") {
       DELETE(uri"/watched" / l.value.toString).flatMap { req =>
         val routes =
@@ -66,6 +77,12 @@ class WatchedRoutesSpec extends AuthHttpTestSuite {
     new TestWatched {
       override def add(userId: auth.UserId, listingId: ListingId): IO[Unit] =
         IO.raiseError(AlreadyWatched(listingId)) *> IO.unit
+    }
+
+  def failingWatchedInvalidListingId: Watched[IO] =
+    new TestWatched {
+      override def add(userId: auth.UserId, listingId: ListingId): IO[Unit] =
+        IO.raiseError(InvalidListingId(listingId)) *> IO.unit
     }
 }
 

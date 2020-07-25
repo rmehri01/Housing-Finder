@@ -4,13 +4,14 @@ import cats.effect.{Resource, Sync}
 import cats.implicits._
 import housingfinder.domain.auth.UserId
 import housingfinder.domain.listings._
-import housingfinder.domain.watched.AlreadyWatched
+import housingfinder.domain.watched.{AlreadyWatched, InvalidListingId}
 import housingfinder.effects.BracketThrow
 import housingfinder.ext.skunkx._
 import skunk._
 import skunk.codec.all._
 import skunk.implicits._
 
+/** Provides a way for users to watch certain listings. */
 trait Watched[F[_]] {
   def get(userId: UserId): F[List[Listing]]
   def add(userId: UserId, listingId: ListingId): F[Unit]
@@ -42,9 +43,14 @@ final class LiveWatched[F[_]: BracketThrow: Sync] private (
         cmd
           .execute(userId ~ listingId)
           .void
-          .handleErrorWith {
+          .adaptError {
+            // If the listing id is already on the users watch list.
             case SqlState.UniqueViolation(_) =>
-              AlreadyWatched(listingId).raiseError[F, Unit]
+              AlreadyWatched(listingId)
+
+            // If the given listing id is not found in the listings table.
+            case SqlState.ForeignKeyViolation(_) =>
+              InvalidListingId(listingId)
           }
       }
     }

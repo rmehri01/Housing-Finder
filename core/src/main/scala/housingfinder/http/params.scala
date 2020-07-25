@@ -8,6 +8,7 @@ import io.estatico.newtype.ops._
 import org.http4s._
 import squants.market.{CAD, Money}
 
+/** Decoders for optional url query params. */
 object params {
 
   implicit def coercibleQueryParamDecoder[A: Coercible[

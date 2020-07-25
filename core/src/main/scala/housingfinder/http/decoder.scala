@@ -13,7 +13,10 @@ object decoder {
       req: Request[F]
   ) extends Http4sDsl[F] {
 
-    // deals with validation errors from Refined and returns 400 rather than 422
+    /** Decodes a request into a type A and then applies f to it in order to create a response.
+      *
+      * Deals with validation errors from Refined and returns 400 Bad Request rather than 422 Unprocessable Entity.
+      */
     def decodeR[A: Decoder](f: A => F[Response[F]]): F[Response[F]] =
       req.asJsonDecode[A].attempt.flatMap {
         case Left(e) =>

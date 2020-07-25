@@ -10,6 +10,11 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
 import scala.concurrent.ExecutionContext
 
+/** Test suite built on top of existing popular ones to hide side-effects by testing within [[cats.effect.IO]].
+  *
+  * Built on top of ScalaTest with support for asynchronous tests, property-based testing with ScalaCheck,
+  * and Cats equality.
+  */
 trait PureTestSuite
     extends AsyncFunSuite
     with ScalaCheckDrivenPropertyChecks

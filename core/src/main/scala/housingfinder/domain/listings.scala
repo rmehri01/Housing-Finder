@@ -26,7 +26,8 @@ object listings {
       url: ListingUrl
   )
 
-  // create listing
+  // create listing, for adding a listing to the database since it won't have a uuid yet
+  // params also check that certain conditions are met like that the url param is a valid url
   @newtype case class TitleParam(value: NonEmptyString)
   @newtype case class AddressParam(value: NonEmptyString)
   @newtype case class DescriptionParam(value: NonEmptyString)
