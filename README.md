@@ -5,6 +5,18 @@
 
 ## Table of Contents
 
+* [About](#about)
+  * [Robust](#robust)
+  * [Extensible](#extensible)
+* [Usage](#usage)
+  * [Listing Routes](#listing-routes)
+  * [Healthcheck Routes](#healthcheck-routes)
+  * [Auth Routes](#auth-routes)
+  * [Watch List Routes](#watch-list-routes)
+  * [Admin Routes](#admin-routes)
+* [Future Improvements](#future-improvements)
+* [Credit](#credit)
+
 ## About
 
 > A robust and extensible housing finder powered by functional programming.
@@ -61,6 +73,16 @@ Without having to worry about implementation details, it is quite easy to see wh
 Additionally, relying on traits (similar to Java interfaces) means that the implementation can be swapped out while not impacting other parts of the program, which leads to much more modularity. The technique is called [tagless final encoding](https://scalac.io/tagless-final-pattern-for-scala-code/), which naturally leads to typesafe and correct programs!
 
 ## Usage
+
+### Listing Routes
+
+### Healthcheck Routes
+
+### Auth Routes
+
+### Watch List Routes
+
+### Admin Routes
 
 ## Future Improvements
 
