@@ -75,19 +75,31 @@ Additionally, relying on traits (similar to Java interfaces) means that the impl
 
 ## Usage
 
-400 bad request (refined)
+The following responses may occur on any of the routes when providing an incorrect request body:
 
-422 unprocessible entity (correct syntax, wrong fields usually)
+* `400 Bad Request` – Due to failing a predicate like valid url or non-empty string.
+* `422 Unprocessable Entity` – Correct syntax but wrong fields for example.
+
+When trying to use secured or admin routes with invalid credentials, you will get:
+
+* `403 forbidden` – For example, no bearer token or invalid bearer token.
 
 ### Listing Routes
 
-`GET /v1/listings`
+#### `GET /v1/listings`
 
-params: lowerPrice, upperPrice, nums
+Parameters |  Type  | Description
+-----------|--------|------------
+lowerPrice | double | The lowest price for the listings.
+upperPrice | double | The highest price for the listings.
 
-200 ok
+##### Request body
 
-no request body
+None
+
+##### Example Responses
+
+`200 Ok`
 
 ```json
 [
@@ -114,11 +126,15 @@ no request body
 
 ### Healthcheck Routes
 
-`GET /v1/healthcheck`
+#### `GET /v1/healthcheck`
 
-200 ok
+##### Request body
 
-no request
+None
+
+##### Example Responses
+
+`200 Ok`
 
 ```json
 {
@@ -129,28 +145,9 @@ no request
 
 ### Auth Routes
 
-`POST /v1/auth/users`
+#### `POST /v1/auth/users`
 
-201 created
-409 conflict `"cool name"`
-
-```json
-{
-    "username": "cool name",
-    "password": "password123"
-}
-```
-
-```json
-{
-    "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1..."
-}
-```
-
-`POST /v1/auth/login`
-
-200 ok
-403 forbidden (wrong username or pass)
+##### Request body
 
 ```json
 {
@@ -159,33 +156,70 @@ no request
 }
 ```
 
+##### Example Responses
+
+`201 Created`
+
 ```json
 {
     "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1..."
 }
 ```
 
-!!applies to all after!!
-
-403 forbidden
+`409 Conflict` – Username already in use.
 
 ```json
-Bearer token not found
+"cool name"
 ```
 
-!!
+#### `POST /v1/auth/login`
 
-`POST /v1/auth/logout`
+##### Request body
 
-204 no content
+```json
+{
+    "username": "cool name",
+    "password": "password123"
+}
+```
 
-no response body, no request body
+##### Example Responses
+
+`200 Ok`
+
+```json
+{
+    "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1..."
+}
+```
+
+`403 Forbidden` – Wrong username or password
+
+No response body.
+
+#### `POST /v1/auth/logout`
+
+##### Request body
+
+None
+
+##### Example Responses
+
+`204 No Content`
+
+No response body.
 
 ### Watch List Routes
 
-`GET /v1/watched`
+#### `GET /v1/watched`
 
-no request
+##### Request body
+
+None
+
+##### Example Responses
+
+`200 Ok`
 
 ```json
 [
@@ -201,24 +235,47 @@ no request
 ]
 ```
 
-`POST /v1/watched/:listingId`
+#### `POST /v1/watched/:listingId`
 
-201 created
-409 conflict `"0558b57b-c9b0-4c73-b49f-05bd61874634"`
+##### Request body
 
-no response no request
+None
 
-`DELETE /v1/watched/:listingId`
+##### Example Responses
 
-204 no content
+`201 Created`
 
-no response no request
+No response body.
+
+`409 Conflict` – Listing is already on the user's watched list.
+
+```json
+"0558b57b-c9b0-4c73-b49f-05bd61874634"
+```
+
+`422 Unprocessable Entity`
+
+```json
+"0558b57b-c9b0-4c73-b49f-05bd61874634"
+```
+
+#### `DELETE /v1/watched/:listingId`
+
+##### Request body
+
+None
+
+##### Example Responses
+
+`204 No Content`
+
+No response body.
 
 ### Admin Routes
 
-`POST /v1/admin/listings`
+#### `POST /v1/admin/listings`
 
-201 created
+##### Request body
 
 ```json
 [
@@ -241,13 +298,23 @@ no response no request
 ]
 ```
 
-no response
+##### Example Responses
 
-`PUT /v1/admin/listings`
+`201 Created`
 
-200 ok
+No response body.
 
-No response body, no request body
+#### `PUT /v1/admin/listings`
+
+##### Request body
+
+None
+
+##### Example Responses
+
+`200 Ok` – Ran the scraper and updated listings successfully.
+
+No response body.
 
 ## Running Locally
 
