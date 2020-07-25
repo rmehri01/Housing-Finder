@@ -4,7 +4,7 @@ import cats.effect.{Resource, Sync}
 import cats.implicits._
 import housingfinder.domain.auth.UserId
 import housingfinder.domain.listings._
-import housingfinder.domain.watched.AlreadyWatched
+import housingfinder.domain.watched.{AlreadyWatched, InvalidListingId}
 import housingfinder.effects.BracketThrow
 import housingfinder.ext.skunkx._
 import skunk._
@@ -44,8 +44,13 @@ final class LiveWatched[F[_]: BracketThrow: Sync] private (
           .execute(userId ~ listingId)
           .void
           .adaptError {
+            // If the listing id is already on the users watch list.
             case SqlState.UniqueViolation(_) =>
               AlreadyWatched(listingId)
+
+            // If the given listing id is not found in the listings table.
+            case SqlState.ForeignKeyViolation(_) =>
+              InvalidListingId(listingId)
           }
       }
     }

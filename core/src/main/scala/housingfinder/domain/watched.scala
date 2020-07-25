@@ -6,4 +6,5 @@ import scala.util.control.NoStackTrace
 
 object watched {
   case class AlreadyWatched(listingId: ListingId) extends NoStackTrace
+  case class InvalidListingId(listingId: ListingId) extends NoStackTrace
 }
