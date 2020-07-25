@@ -18,7 +18,7 @@ trait Users[F[_]] {
 
   /** Creates a new user with the given username and password.
     *
-    * Raises a [[UsernameInUse]] error if a user with the given username already exists.
+    * Raises a [[housingfinder.domain.auth.UsernameInUse]] error if a user with the given username already exists.
     */
   def create(username: Username, password: Password): F[UserId]
 

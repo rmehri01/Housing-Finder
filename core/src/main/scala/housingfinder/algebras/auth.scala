@@ -21,7 +21,9 @@ trait Auth[F[_]] {
   def logout(token: JwtToken, username: Username): F[Unit]
 }
 
-/** Tries to find users of a specific type A, for example [[CommonUser]] or [[AdminUser]]. */
+/** Tries to find users of a specific type A, for example [[housingfinder.http.auth.users.CommonUser]] or
+  * [[housingfinder.http.auth.users.AdminUser]].
+  */
 trait UsersAuth[F[_], A] {
   def findUser(token: JwtToken)(claim: JwtClaim): F[Option[A]]
 }

@@ -15,7 +15,9 @@ import scala.concurrent.duration._
 
 object load {
 
-  /** Based on the [[AppEnvironment]], load the [[default]] settings in a different way. */
+  /** Based on the [[housingfinder.config.environments.AppEnvironment]],
+    * load the default settings in a different way.
+    */
   def apply[F[_]: Async: ContextShift]: F[AppConfig] =
     env("HF_APP_ENV")
       .as[AppEnvironment]
