@@ -16,9 +16,9 @@ final class ListingRoutes[F[_]: Defer: Monad](
   private[routes] val prefixPath = "/listings"
 
   object LowerBoundParam
-      extends OptionalQueryParamDecoderMatcher[LowerBound]("lower")
+      extends OptionalQueryParamDecoderMatcher[LowerBound]("lowerPrice")
   object UpperBoundParam
-      extends OptionalQueryParamDecoderMatcher[UpperBound]("upper")
+      extends OptionalQueryParamDecoderMatcher[UpperBound]("upperPrice")
 
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root :? LowerBoundParam(lower) :? UpperBoundParam(upper) =>

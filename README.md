@@ -75,15 +75,179 @@ Additionally, relying on traits (similar to Java interfaces) means that the impl
 
 ## Usage
 
+400 bad request (refined)
+
+422 unprocessible entity (correct syntax, wrong fields usually)
+
 ### Listing Routes
+
+`GET /v1/listings`
+
+params: lowerPrice, upperPrice, nums
+
+200 ok
+
+no request body
+
+```json
+[
+    {
+        "uuid": "0558b57b-c9b0-4c73-b49f-05bd61874634",
+        "title": "Listing 1",
+        "address": "123 Fake Street",
+        "price": 2590.0,
+        "description": "A very cool place!",
+        "datePosted": "2020-07-25T01:14:00",
+        "url": "https://www.something.com"
+    },
+    {
+        "uuid": "0558b57b-c9b0-4c73-b49f-05bd61874635",
+        "title": "Listing 2",
+        "address": "12 Fake Street",
+        "price": 500.25,
+        "description": "Another very cool place!",
+        "datePosted": "2020-07-25T01:14:00",
+        "url": "https://www.somethingelse.com"
+    }
+]
+```
 
 ### Healthcheck Routes
 
+`GET /v1/healthcheck`
+
+200 ok
+
+no request
+
+```json
+{
+    "redis": true,
+    "postgres": true
+}
+```
+
 ### Auth Routes
+
+`POST /v1/auth/users`
+
+201 created
+409 conflict `"cool name"`
+
+```json
+{
+    "username": "cool name",
+    "password": "password123"
+}
+```
+
+```json
+{
+    "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1..."
+}
+```
+
+`POST /v1/auth/login`
+
+200 ok
+403 forbidden (wrong username or pass)
+
+```json
+{
+    "username": "cool name",
+    "password": "password123"
+}
+```
+
+```json
+{
+    "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1..."
+}
+```
+
+!!applies to all after!!
+
+403 forbidden
+
+```json
+Bearer token not found
+```
+
+!!
+
+`POST /v1/auth/logout`
+
+204 no content
+
+no response body, no request body
 
 ### Watch List Routes
 
+`GET /v1/watched`
+
+no request
+
+```json
+[
+    {
+        "uuid": "0558b57b-c9b0-4c73-b49f-05bd61874634",
+        "title": "Listing 2",
+        "address": "12 Fake Street",
+        "price": 500.25,
+        "description": "Another very cool place!",
+        "datePosted": "2020-07-25T01:14:00",
+        "url": "https://www.somethingelse.com"
+    }
+]
+```
+
+`POST /v1/watched/:listingId`
+
+201 created
+409 conflict `"0558b57b-c9b0-4c73-b49f-05bd61874634"`
+
+no response no request
+
+`DELETE /v1/watched/:listingId`
+
+204 no content
+
+no response no request
+
 ### Admin Routes
+
+`POST /v1/admin/listings`
+
+201 created
+
+```json
+[
+    {
+        "title": "Listing 1",
+        "address": "123 Fake Street",
+        "price": 2590.0,
+        "description": "A very cool place!",
+        "datePosted": "2020-07-25T01:14:00",
+        "url": "https://www.something.com"
+    },
+    {
+        "title": "Listing 2",
+        "address": "12 Fake Street",
+        "price": 500.25,
+        "description": "Another very cool place!",
+        "datePosted": "2020-07-25T01:14:00",
+        "url": "https://www.somethingelse.com"
+    }
+]
+```
+
+no response
+
+`PUT /v1/admin/listings`
+
+200 ok
+
+No response body, no request body
 
 ## Running Locally
 
