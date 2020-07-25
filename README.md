@@ -14,6 +14,7 @@
   * [Auth Routes](#auth-routes)
   * [Watch List Routes](#watch-list-routes)
   * [Admin Routes](#admin-routes)
+* [Running Locally](#running-locally)
 * [Future Improvements](#future-improvements)
 * [Credit](#credit)
 
@@ -83,6 +84,28 @@ Additionally, relying on traits (similar to Java interfaces) means that the impl
 ### Watch List Routes
 
 ### Admin Routes
+
+## Running Locally
+
+Before running the app or tests, start up Redis and Postgres by running:
+
+```bash
+docker-compose up
+```
+
+To run the app, you will need a `.env` file in the root directory. For example, the ones in [app/docker-compose.yml](app/docker-compose.yml) that are used for **testing purposes only**. Then, to run with sbt revolver:
+
+```bash
+sbt
+project housing-finder-core
+reStart # you can run reStart again once you make changes to reload
+```
+
+To run the tests:
+
+```bash
+sbt test
+```
 
 ## Future Improvements
 
