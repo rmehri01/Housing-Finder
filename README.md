@@ -22,7 +22,7 @@
 
 > A robust and extensible housing finder powered by functional programming.
 
-Initially, this was a web app that I made to help UBC students find housing off-campus in the Vancouver area. I found that visiting numerous different sites to do so is time consuming and quite repetitive, so I wanted to have one place where students can quickly see the specifications of each listing.
+Initially, this was a web app that I made to help UBC students find housing off-campus in the Vancouver area. I found that visiting numerous different sites to do so is time-consuming and quite repetitive, so I wanted to have one place where students can quickly see the specifications of each listing.
 
 Since then I have worked on making the app more extensible, so while the current implementation still gets listings for UBC, it is now much easier to get listings from other places or sources. I have also added some other features that were mostly for fun or learning purposes but that I still thought were nice to have:
 
@@ -34,7 +34,7 @@ Since then I have worked on making the app more extensible, so while the current
 
 The error handling mechanics provided by functional programming allow you to only focus on errors related to business logic while letting the frameworks handle the rest. In this way, the code does not get polluted with error checks or try/catch blocks, while still maintaining a robust system in the case of other errors such as an internal server error.
 
-Explicit encoding and handling of errors in typeclasses such as `Option` or `Either` make sure that less can go wrong, since you can safely perform operations these typeclasses, like on a `None` but would end up with a `NullPointerException` if doing so with a `null` value.
+Explicit encoding and handling of errors in typeclasses such as `Option` or `Either` make sure that less can go wrong since you can safely perform operations these typeclasses, like on a `None` but would end up with a `NullPointerException` if doing so with a `null` value.
 
 As an example, when trying to create a new user, that username may already be in use. Thus, in `user.find`, we check if some value already exists and raise a `UsernameInUse` error:
 
@@ -60,7 +60,7 @@ And that's it, clean and simple!
 
 ### Extensible
 
-Many state that functional programs are easier to comprehend and reason about, and I find this to be very true. I have found that many times throughout this project I could debug and refactor without fear of accidentally breaking something else in the system. Additionally, the code is much more self documenting, since I could quickly glance at a function's signature and immediately know what it does. For example:
+Many state that functional programs are easier to comprehend and reason about, and I find this to be very true. I have found that many times throughout this project I could debug and refactor without fear of accidentally breaking something else in the system. Additionally, the code is more self-documenting, since I could quickly glance at a function's signature and immediately know what it does. For example:
 
 ```scala
 trait Users[F[_]] {
@@ -69,7 +69,7 @@ trait Users[F[_]] {
 }
 ```
 
-Without having to worry about implementation details, it is quite easy to see what these functions do. As well, it is harder to mess up actually using these functions due to using [newtypes](https://github.com/estatico/scala-newtype), since you cannot easily pass in arguments in the wrong order, as opposed to using `String`.
+Without having to worry about implementation details, it is quite easy to see what these functions do. As well, it is harder to mess up using these functions due to using [newtypes](https://github.com/estatico/scala-newtype), since you cannot easily pass in arguments in the wrong order, as opposed to using `String`.
 
 Additionally, relying on traits (similar to Java interfaces) means that the implementation can be swapped out while not impacting other parts of the program, which leads to much more modularity. The technique is called [tagless final encoding](https://scalac.io/tagless-final-pattern-for-scala-code/), which naturally leads to typesafe and correct programs!
 
@@ -77,7 +77,7 @@ Additionally, relying on traits (similar to Java interfaces) means that the impl
 
 The following responses may occur on any of the routes when providing an incorrect request body:
 
-* `400 Bad Request` – Due to failing a predicate like valid url or non-empty string.
+* `400 Bad Request` – Due to failing a predicate like valid URL or non-empty string.
 * `422 Unprocessable Entity` – Correct syntax but wrong fields for example.
 
 When trying to use secured or admin routes with invalid credentials, you will get:
@@ -341,7 +341,7 @@ sbt test
 ## Future Improvements
 
 * Complete frontend for the app.
-* Add full integration test (not just Redis and Postgres separately).
+* Add a full integration test (not just Redis and Postgres separately).
 * More specific logging.
 * More advanced functional techniques like MTL, optics, and streaming data.
 
