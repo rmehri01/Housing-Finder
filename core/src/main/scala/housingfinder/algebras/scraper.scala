@@ -4,49 +4,80 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-import cats.Applicative
 import cats.effect.Sync
 import cats.implicits._
+import cats.{Monad, Parallel}
 import housingfinder.domain.listings._
 import housingfinder.domain.scraper._
+import housingfinder.http.clients.KijijiClient
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import squants.market.CAD
 
-/** Provides a way to extract listing information when given HTML.
-  *
-  * This is slightly coupled with the client that gets the HTML, since not all websites
-  * will need to get the urls on the page. However, using this client gives more control over
-  * the level of parallelism than the JsoupBrowser does.
-  */
+/** Provides a way to extract listing information from websites. */
 trait Scraper[F[_]] {
-
-  /** Returns a list of relative links to the listings found in the HTML. */
-  def getUrlsOnPage(html: Html): F[List[RelListingUrl]]
-
-  /** Constructs a single CreateListing using the page HTML and its url. */
-  def createListingFromPage(html: Html, url: ListingUrl): F[CreateListing]
-
+  def run: F[List[CreateListing]]
 }
 
 object LiveScraper {
-  def make[F[_]: Sync]: F[LiveScraper[F]] =
+  def make[F[_]: Sync: Parallel](kijiji: KijijiClient[F]): F[LiveScraper[F]] =
     Sync[F].delay {
-      new LiveScraper[F]
+      new LiveScraper[F](kijiji)
     }
 }
 
-final class LiveScraper[F[_]: Applicative] extends Scraper[F] {
+// Using the http4s client gives more control over the level of parallelism than the JsoupBrowser does.
+final class LiveScraper[F[_]: Monad: Parallel] private (
+    kijiji: KijijiClient[F]
+) extends Scraper[F] {
+
+  /** Scrapes the first three pages of Kijiji listings and adds them to the database. */
+  override def run: F[List[CreateListing]] =
+    (1 to 3)
+      .map(makePageUrl)
+      .toList
+      .parFlatTraverse(scrapeSinglePage)
+      .map(_.distinct)
+
+  private val BaseUrl =
+    "https://www.kijiji.ca"
+
+  private def makePageUrl(pageNum: Int): KijijiUrl =
+    KijijiUrl(
+      BaseUrl + s"/b-apartments-condos/ubc-university-british-columbia/ubc/page-$pageNum/k0c37l1700291?radius=12.0&address=University+Endowment+Lands%2C+BC&ll=49.273128,-123.248764"
+    )
+
+  /** Constructs a list of CreateListings based on a main page with listing urls on it. */
+  private def scrapeSinglePage(url: KijijiUrl): F[List[CreateListing]] =
+    for {
+      html <- kijiji.getHtml(url.value)
+      urls <- getUrlsOnPage(html)
+      listings <- urls.parTraverse(relUrl =>
+        scrapeSingleListing(ListingUrl(BaseUrl + relUrl.value))
+      )
+    } yield listings
+
+  /** Constructs a CreateListing given it's listing url. */
+  private def scrapeSingleListing(url: ListingUrl): F[CreateListing] =
+    kijiji.getHtml(url.value).flatMap { html =>
+      createListingFromPage(
+        html,
+        url
+      )
+    }
+
   private val browser = JsoupBrowser()
 
-  override def getUrlsOnPage(html: Html): F[List[RelListingUrl]] =
+  /** Returns a list of relative links to the listings found in the HTML. */
+  private def getUrlsOnPage(html: Html): F[List[RelListingUrl]] =
     (browser.parseString(html.value) >> attrs("href")(".title .title"))
       .map(RelListingUrl.apply)
       .toList
       .pure[F]
 
-  override def createListingFromPage(
+  /** Constructs a single CreateListing using the page HTML and its url. */
+  private def createListingFromPage(
       html: Html,
       url: ListingUrl
   ): F[CreateListing] = {

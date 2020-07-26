@@ -10,11 +10,12 @@ import skunk._
 object Algebras {
   def make[F[_]: Concurrent: Parallel: Timer](
       redis: RedisCommands[F, String, String],
-      sessionPool: Resource[F, Session[F]]
+      sessionPool: Resource[F, Session[F]],
+      httpClients: HttpClients[F]
   ): F[Algebras[F]] =
     for {
       listings <- LiveListings.make[F](sessionPool)
-      scraper <- LiveScraper.make[F]
+      scraper <- LiveScraper.make[F](httpClients.kijiji)
       watched <- LiveWatched.make[F](sessionPool)
       health <- LiveHealthCheck.make[F](sessionPool, redis)
     } yield new Algebras[F](listings, scraper, watched, health)
