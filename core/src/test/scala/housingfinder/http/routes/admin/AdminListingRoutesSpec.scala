@@ -1,14 +1,11 @@
 package housingfinder.http.routes.admin
 
-import java.time.LocalDateTime
-
 import cats.data.NonEmptyList
 import cats.effect.IO
 import eu.timepit.refined.api.Refined
 import housingfinder.algebras.{Listings, Scraper}
 import housingfinder.domain.listings._
 import housingfinder.domain.scraper._
-import housingfinder.http.clients.KijijiClient
 import housingfinder.http.json._
 import housingfinder.programs.UpdateListingsProgram
 import org.http4s.Method._
@@ -66,8 +63,7 @@ class AdminListingRoutesSpec extends AuthHttpTestSuite {
           new AdminUpdateRoutes(
             new UpdateListingsProgram(
               new TestListings,
-              new TestScraper,
-              new TestKijijiClient
+              new TestScraper
             )
           ).routes(adminUserMiddleware)
         assertHttpStatus(routes, req)(Status.Ok)
@@ -82,8 +78,7 @@ class AdminListingRoutesSpec extends AuthHttpTestSuite {
             new AdminUpdateRoutes(
               new UpdateListingsProgram(
                 new TestListings,
-                new TestScraper,
-                failingKijijiClient(errMsg)
+                failingScraper(errMsg)
               )
             ).routes(adminUserMiddleware)
           assertHttp(routes, req)(Status.InternalServerError, errMsg)
@@ -91,10 +86,11 @@ class AdminListingRoutesSpec extends AuthHttpTestSuite {
     }
   }
 
-  def failingKijijiClient(errMsg: ErrorMessage): KijijiClient[IO] =
-    new TestKijijiClient {
-      override def getHtml(url: String): IO[Html] =
-        IO.raiseError(KijijiConnectionError(errMsg)) *> IO.pure(Html(""))
+  def failingScraper(errMsg: ErrorMessage): Scraper[IO] =
+    new TestScraper {
+      override def run: IO[List[CreateListing]] =
+        IO.raiseError(KijijiConnectionError(errMsg)) *>
+          IO.pure(List.empty)
     }
 }
 
@@ -107,26 +103,5 @@ protected class TestListings extends Listings[IO] {
 }
 
 protected class TestScraper extends Scraper[IO] {
-  override def getUrlsOnPage(html: Html): IO[List[RelListingUrl]] =
-    IO.pure(List.empty)
-
-  override def createListingFromPage(
-      html: Html,
-      url: ListingUrl
-  ): IO[CreateListing] =
-    IO.pure(
-      CreateListing(
-        Title(""),
-        Address(""),
-        None,
-        Description(""),
-        LocalDateTime.parse("2019-01-21T05:47:20.949"),
-        ListingUrl("")
-      )
-    )
-}
-
-protected class TestKijijiClient extends KijijiClient[IO] {
-  override def getHtml(url: String): IO[Html] =
-    IO.pure(Html(""))
+  override def run: IO[List[CreateListing]] = IO.pure(List.empty)
 }

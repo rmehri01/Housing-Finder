@@ -82,7 +82,7 @@ The following responses may occur on any of the routes when providing an incorre
 
 When trying to use secured or admin routes with invalid credentials, you will get:
 
-* `403 forbidden` – For example, no bearer token or invalid bearer token.
+* `403 Forbidden` – For example, no bearer token or invalid bearer token.
 
 ### Listing Routes
 
