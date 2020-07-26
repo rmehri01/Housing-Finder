@@ -103,7 +103,8 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
       (
           c: CreateListing,
           un: Username,
-          pw: Password
+          pw: Password,
+          id: ListingId
       ) =>
         spec("Watched") {
           for {
@@ -127,11 +128,18 @@ class PostgresTest extends ResourceSuite[Resource[IO, Session[IO]]] {
             // try to add a duplicate to the watch list
             e <- w.add(d, lId).attempt
 
+            // try adding a non-existent id
+            f <- w.add(d, id).attempt
+
             // remove listing from watch list
             _ <- w.remove(d, lId)
             z <- w.get(d)
           } yield assert(
-            x.isEmpty && y.count(_.uuid == lId) === 1 && e.isLeft && z.isEmpty
+            x.isEmpty &&
+              y.count(_.uuid == lId) === 1 &&
+              e.isLeft &&
+              f.isLeft &&
+              z.isEmpty
           )
         }
     }
