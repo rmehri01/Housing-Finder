@@ -28,7 +28,6 @@ Since then I have worked on making the app more extensible, so while the current
 
 * User login so that users can add listings to a personal watch list.
 * Caching listing results in a database to drastically reduce the time taken to retrieve them.
-* Deploying the app using serverless technologies to save on costs.
 
 ### Robust
 
